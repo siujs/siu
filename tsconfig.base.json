@@ -1,0 +1,17 @@
+{
+	"compilerOptions": {
+		"esModuleInterop": true,
+		"assumeChangesOnlyAffectDirectDependencies": true,
+		"allowSyntheticDefaultImports": true,
+		"target": "ESNext",
+		"module": "CommonJS",
+		"noImplicitAny": true,
+		"moduleResolution": "node",
+		"removeComments": true,
+    "declaration": true,
+    "sourceMap": true
+	},
+  "include": [
+		"packages/global.d.ts",
+	]
+}

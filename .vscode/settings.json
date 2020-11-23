@@ -1,0 +1,19 @@
+{
+	"typescript.tsdk": "./node_modules/typescript/lib",
+	"editor.formatOnSave": true,
+	"editor.defaultFormatter": "esbenp.prettier-vscode",
+	"prettier.packageManager": "yarn",
+	"eslint.packageManager": "yarn",
+	"editor.codeActionsOnSave": {
+		"source.fixAll.eslint": true
+	},
+	"importSorter.generalConfiguration.sortOnBeforeSave": true,
+	"importSorter.importStringConfiguration.quoteMark": "double",
+	"importSorter.importStringConfiguration.tabSize": 2,
+	"importSorter.importStringConfiguration.tabType": "tab",
+	"importSorter.sortConfiguration.removeUnusedImports": true,
+	"importSorter.sortConfiguration.removeUnusedDefaultImports": true,
+	"importSorter.sortConfiguration.customOrderingRules.defaultOrderLevel": 20,
+	"importSorter.importStringConfiguration.maximumNumberOfImportExpressionsPerLine.count": 120,
+	"importSorter.importStringConfiguration.maximumNumberOfImportExpressionsPerLine.type": "newLineEachExpressionAfterCountLimit"
+}

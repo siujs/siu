@@ -1,0 +1,14 @@
+{
+	"extends": "./tsconfig.base.json",
+  "compilerOptions": {
+		  "rootDir": ".",
+			"baseUrl": ".",
+      "paths": {
+					"@siujs/*": ["./packages/*/"]
+			}
+	},
+  "include": [
+		"packages/*/lib",
+		"packages/*/__tests__"
+	]
+}

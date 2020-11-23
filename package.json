@@ -1,0 +1,46 @@
+{
+	"private": true,
+	"workspaces": [
+		"packages/**"
+	],
+	"name": "siu-cli",
+	"version": "1.0.0",
+	"main": "dist/index.js",
+	"module": "dist/index.js",
+	"author": "buns <zpli_buns@126.com>",
+	"license": "MIT",
+	"bin": {
+		"siu": "./bin/siu.js"
+	},
+	"files": [
+		"bin",
+		"dist"
+	],
+	"scripts": {
+		"clean:tmp": "rimraf -g packages/*/tsconfig.tsbuildinfo",
+		"clean:dist": "rimraf -g packages/*/dist",
+		"clean": "npm run clean:dist && npm run clean:tmp",
+		"compile": "lerna run build --stream --scope=@siujs/*",
+		"build": "npm run clean && npm run compile && npm run clean:tmp",
+		"test": "node ./scripts/test.mjs"
+	},
+	"devDependencies": {
+		"@types/jest": "26.0.15",
+		"@types/node": "14.14.7",
+		"@typescript-eslint/eslint-plugin": "4.7.0",
+		"@typescript-eslint/parser": "4.7.0",
+		"cross-env": "7.0.2",
+		"eslint": "7.13.0",
+		"eslint-config-prettier": "6.15.0",
+		"eslint-plugin-prettier": "3.1.4",
+		"lerna": "^3.22.1",
+		"prettier": "2.1.2",
+		"rimraf": "3.0.2",
+		"typescript": "4.0.5"
+	},
+	"dependencies": {
+		"jest": "26.6.3",
+		"ts-jest": "26.4.4",
+		"validate-npm-package-name": "3.0.0"
+	}
+}

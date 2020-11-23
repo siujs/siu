@@ -1,0 +1,39 @@
+{
+  "name": "@siujs/utils",
+  "version": "1.0.0",
+  "description": "utils of siu",
+  "keywords": [
+    "siu",
+    "cli",
+    "siujs",
+    "utils"
+  ],
+  "author": "buns <kuafujs@126.com>",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "directories": {
+    "lib": "lib",
+    "test": "__tests__"
+  },
+  "files": [
+    "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/siujs/siu.git"
+  },
+  "bugs": {
+    "url": "https://github.com/siujs/siu/issues"
+  },
+  "homepage": "https://github.com/siujs/siu#readme",
+  "scripts": {
+    "build": "tsc -b tsconfig.json"
+  },
+  "dependencies": {
+    "cli-spinner": "^0.2.10",
+    "shelljs": "^0.8.4"
+  },
+  "devDependencies": {
+    "@types/shelljs": "^0.8.8"
+  }
+}
