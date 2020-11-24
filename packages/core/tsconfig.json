@@ -3,7 +3,7 @@
 	"compilerOptions": {
 		"composite": true,
 		"rootDir": "lib",
-		"outDir": "dist",
+		"outDir": "dist/dts",
 		"baseUrl": "lib"
 	},
 	"references": [

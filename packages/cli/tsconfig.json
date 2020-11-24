@@ -6,6 +6,14 @@
 		"outDir": "dist/dts",
 		"baseUrl": "lib"
 	},
+	"references": [
+		{
+			"path": "../utils"
+		},
+		{
+			"path": "../core"
+		}
+	],
 	"include": [
 		"lib",
 		"lib/shim.d.ts"

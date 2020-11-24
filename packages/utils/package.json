@@ -11,6 +11,9 @@
   "author": "buns <kuafujs@126.com>",
   "license": "MIT",
   "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/utils.d.ts",
+  "typings": "dist/utils.d.ts",
   "directories": {
     "lib": "lib",
     "test": "__tests__"
@@ -34,6 +37,7 @@
     "shelljs": "^0.8.4"
   },
   "devDependencies": {
-    "@types/shelljs": "^0.8.8"
+    "@types/shelljs": "0.8.8",
+    "shelljs": "0.8.4"
   }
 }
