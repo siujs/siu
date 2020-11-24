@@ -1,7 +1,9 @@
 import { getSiuConfiger } from "./config/siu";
 import { getMonorepoRootContext } from "./plugin/context/root";
-import { HookHandler, SiuPlugin } from "./plugin/ctor";
-import { PkgCmdHookLifecycle, PkgCommand } from "./types";
+import { SiuPlugin } from "./plugin/ctor";
+import { HookHandler, PkgCmdHookLifecycle, PkgCommand } from "./types";
+
+export * from "./types";
 
 export type PluginApi = Record<PkgCommand, Record<PkgCmdHookLifecycle, (fn: HookHandler) => void>>;
 

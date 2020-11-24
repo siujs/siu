@@ -1,3 +1,5 @@
+import { PlugContext } from "./plugin/context/plug";
+
 export interface PkgData {
 	/**
 	 * full name of package, equlas `name` in package.json
@@ -58,3 +60,9 @@ export interface SiuConfig {
 		  ]
 	)[];
 }
+
+export type HookHandler = (
+	ctx: PlugContext,
+	opts: <T extends any>(key: string) => T,
+	next: (err?: Error) => Promise<void>
+) => Promise<void> | void;

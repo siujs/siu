@@ -1,5 +1,6 @@
 import fs from "fs-extra";
 
+import { PkgData } from "../../types";
 import { getMonorepoRootContext, MonorepoRootContext } from "./root";
 
 export class PkgContext {
@@ -23,7 +24,7 @@ export class PkgContext {
 	/**
 	 * 获取当前pkg上下文的pkg数据
 	 */
-	pkgData() {
+	pkgData(): PkgData {
 		return this._parent.pkgData(this._pkgName);
 	}
 

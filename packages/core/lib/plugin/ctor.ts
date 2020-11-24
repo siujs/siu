@@ -1,11 +1,5 @@
-import { PkgCmdHookLifecycle, PkgCommand } from "../types";
+import { HookHandler, PkgCmdHookLifecycle, PkgCommand } from "../types";
 import { getCurrentPlugContext, PlugContext } from "./context/plug";
-
-export type HookHandler = (
-	ctx: PlugContext,
-	opts: <T extends any>(key: string) => T,
-	next: (err?: Error) => Promise<void>
-) => Promise<void> | void;
 
 function getHookId(action: PkgCommand, lifeCycle: PkgCmdHookLifecycle) {
 	return `${action}.${lifeCycle}`;
