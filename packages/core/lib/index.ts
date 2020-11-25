@@ -1,5 +1,5 @@
 import { getSiuConfiger } from "./config/siu";
-import { getMonorepoRootContext } from "./plugin/context/root";
+import { getMonorepoRootContext, MonorepoRootContext } from "./plugin/context/root";
 import { SiuPlugin } from "./plugin/ctor";
 import { HookHandler, PkgCmdHookLifecycle, PkgCommand } from "./types";
 
@@ -53,19 +53,20 @@ export function plugin(defaultOpts: Partial<Record<PkgCommand, Record<string, an
 	return buckets[id];
 }
 
-export async function applyPlugins(opts: { pkgName?: string; cmd: PkgCommand; actionOpts?: any }) {
+export async function applyPlugins(cmd: PkgCommand, pkgNames?: string, opts?: any) {
 	const cfger = getSiuConfiger();
-
 	cfger.resolvePlugins();
 
-	const pkgDirList = opts.pkgName ? [opts.pkgName] : await getMonorepoRootContext().allPkgDirs();
+	const pkgDirList = pkgNames
+		? pkgNames.split(",").map(pkg => MonorepoRootContext.resolvePkgDirName(pkg))
+		: await getMonorepoRootContext().allPkgDirs();
 
 	await Promise.all(
 		pluginBuckets
 			.map(plug =>
 				pkgDirList
-					.filter(pkgDir => !cfger.isPkgDisable(pkgDir, opts.cmd, plug.id()))
-					.map(pkgDir => plug.apply(pkgDir, opts.cmd, opts.actionOpts || {}))
+					.filter(pkgDir => !cfger.isPkgDisable(pkgDir, cmd, plug.id()))
+					.map(pkgDir => plug.apply(pkgDir, cmd, opts || {}))
 			)
 			.flat()
 	);
@@ -73,7 +74,7 @@ export async function applyPlugins(opts: { pkgName?: string; cmd: PkgCommand; ac
 	await Promise.all(
 		pluginBuckets
 			.map(plug =>
-				pkgDirList.filter(pkgDir => !cfger.isPkgDisable(pkgDir, opts.cmd, plug.id())).map(pkgDir => plug.clean(pkgDir))
+				pkgDirList.filter(pkgDir => !cfger.isPkgDisable(pkgDir, cmd, plug.id())).map(pkgDir => plug.clean(pkgDir))
 			)
 			.flat()
 	);
