@@ -1,0 +1,22 @@
+{
+	"extends": "../../tsconfig.base.json",
+	"compilerOptions": {
+		"composite": true,
+		"rootDir": "lib",
+		"outDir": "dist/dts",
+		"baseUrl": "lib"
+	},
+	"references": [
+		{
+			"path": "../utils"
+		}
+	],
+	"include": [
+		"lib",
+		"lib/shim.d.ts"
+	],
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
+}
