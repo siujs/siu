@@ -1,17 +1,18 @@
 {
-  "name": "@siujs/cli",
+  "name": "siu",
   "version": "1.0.0",
   "description": "cli of siujs",
   "keywords": [
     "cli",
+    "siu",
     "siujs"
   ],
   "author": "buns <kuafujs@126.com>",
   "license": "MIT",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
-  "types": "dist/cli.d.ts",
-  "typings": "dist/cli.d.ts",
+  "types": "dist/siu.d.ts",
+  "typings": "dist/siu.d.ts",
   "directories": {
     "lib": "lib",
     "test": "__tests__"
@@ -20,6 +21,7 @@
     "siu": "./bin/siu.js"
   },
   "files": [
+		"bin",
     "dist"
   ],
   "repository": {
@@ -35,6 +37,7 @@
   "homepage": "https://github.com/siujs/siu#readme",
   "dependencies": {
     "@siujs/core": "^1.0.0",
+    "@siujs/init-app": "^1.0.0",
     "@siujs/utils": "^1.0.0",
     "commander": "^6.2.0",
     "fs-extra": "^9.0.1",
