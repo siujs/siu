@@ -34,22 +34,3 @@ export function decodeCamelizeStr(str: string, isFirstLower?: boolean): string {
 
 	return isFirstLower ? newStr[0].toLowerCase() + newStr.substring(1) : newStr;
 }
-
-/**
- *
- * calculate file size (unit: kb)
- *
- * @param {Buffer} fileContent file content buffer
- */
-export function toKB(fileContent: Buffer): string {
-	return (fileContent.length / 1024).toFixed(2) + "kb";
-}
-
-/**
- *
- * Remove leading and trailing spaces
- *
- */
-export function trim(input: string): string {
-	return input ? input.replace(/^\s+|\s+$|/g, "") : input;
-}
