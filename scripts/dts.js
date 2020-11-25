@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
+
 const path = require("path");
 const fs = require("fs-extra");
 const chalk = require("chalk");
@@ -5,10 +7,9 @@ const shelljs = require("shelljs");
 
 const packagesRoot = path.resolve(__dirname, "../packages/");
 
-const pkgDirList = ["utils", "core", "cli"];
+const pkgDirList = ["utils", "core", "init-app", "siu", "rollup"];
 
 async function runApiExtractor(pkgName) {
-	// eslint-disable-next-line @typescript-eslint/no-var-requires
 	const { Extractor, ExtractorConfig } = require("@microsoft/api-extractor");
 
 	const extractorConfigPath = path.resolve(path.resolve(packagesRoot, pkgName), `api-extractor.json`);
