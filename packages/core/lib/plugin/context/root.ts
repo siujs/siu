@@ -7,7 +7,7 @@ import { PkgData } from "../../types";
 
 export class MonorepoRootContext {
 	private readonly _cwd: string;
-	private readonly _pkgMetaCache: Record<string, PkgData>;
+	private readonly _pkgMetaCache: Record<string, PkgData> = {};
 	private keyValues: Record<string, any> = {};
 	constructor(cwd: string) {
 		this._cwd = cwd;
@@ -74,7 +74,7 @@ export class MonorepoRootContext {
 	keys<T>(key: string, value?: T) {
 		if (value) {
 			this.keyValues[key] = value;
-			return this;
+			return;
 		}
 		return this.keyValues[key];
 	}
