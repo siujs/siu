@@ -1,3 +1,5 @@
+import chalk from "chalk";
+
 import { HookHandler, PkgCmdHookLifecycle, PkgCommand } from "../types";
 import { getCurrentPlugContext, PlugContext } from "./context/plug";
 
@@ -92,7 +94,17 @@ export class SiuPlugin {
 			...actionOpts
 		};
 
-		await this.callHook(getHookId(action, (this.lifecycle = "start")));
+		console.log(chalk.hex("#4c91ff").bold(`\n[${this.ctx.id()}:${action}] ======\n`));
+
+		try {
+			await this.callHook(getHookId(action, (this.lifecycle = "start")));
+		} catch (ex) {
+			console.log(chalk.redBright(`\n[${this._id}] ERROR:`));
+			this.ctx.ex(ex);
+			await this.callHook(getHookId(action, "error"));
+		}
+
+		console.log(chalk.hex("#4c91ff").bold(`====== [${this.ctx.id()}:${action}]\n`));
 	}
 	/**
 	 *
