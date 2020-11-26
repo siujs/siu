@@ -36,6 +36,9 @@ export class SiuPlugin {
 	}
 	private async callHook(hookKey: string) {
 		const handlers = this.hooks[hookKey];
+
+		if (!handlers || !handlers.length) return;
+
 		const next =
 			hookKey.endsWith("error") || hookKey.endsWith("complete") || hookKey.endsWith("clean")
 				? null
