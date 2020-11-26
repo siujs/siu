@@ -1,7 +1,7 @@
 import fs from "fs-extra";
 import path from "path";
 
-import { camelize } from "@siujs/utils";
+import { camelize, resolvePkgDirName } from "@siujs/utils";
 
 import { PkgData } from "../../types";
 
@@ -37,7 +37,7 @@ export class MonorepoRootContext {
 	 * @param pkgName pkg名称
 	 */
 	pkgData(pkgName: string) {
-		const dirName = MonorepoRootContext.resolvePkgDirName(pkgName);
+		const dirName = resolvePkgDirName(pkgName);
 
 		if (!this._pkgMetaCache[dirName]) {
 			const pkgsRoot = this.pkgsRoot();
@@ -110,26 +110,11 @@ export class MonorepoRootContext {
 	}
 
 	static getPkgUniqKey(pkgName: string) {
-		return `|__pkg:${MonorepoRootContext.resolvePkgDirName(pkgName)}__|`;
+		return `|__pkg:${resolvePkgDirName(pkgName)}__|`;
 	}
 
 	static getPlugUniqKey(plugId: string, pkgName: string) {
-		return `|__pkg:${MonorepoRootContext.resolvePkgDirName(pkgName)}__|__plug:${plugId}__|`;
-	}
-
-	/**
-	 * 通过pkgName来得到准确的pkg目录名称
-	 *
-	 * @param pkgName 客户端传入的pkg名称
-	 *
-	 * @returns 正确的pkg目录名称
-	 */
-	static resolvePkgDirName(pkgName: string) {
-		let dirName = pkgName;
-		if (dirName.startsWith("@") && ~dirName.indexOf("/")) {
-			dirName = dirName.split("/").pop();
-		}
-		return dirName;
+		return `|__pkg:${resolvePkgDirName(pkgName)}__|__plug:${plugId}__|`;
 	}
 }
 

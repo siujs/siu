@@ -1,5 +1,7 @@
+import { resolvePkgDirName } from "@siujs/utils";
+
 import { getSiuConfiger } from "./config/siu";
-import { getMonorepoRootContext, MonorepoRootContext } from "./plugin/context/root";
+import { getMonorepoRootContext } from "./plugin/context/root";
 import { SiuPlugin } from "./plugin/ctor";
 import { HookHandler, PkgCmdHookLifecycle, PkgCommand } from "./types";
 
@@ -58,7 +60,7 @@ export async function applyPlugins(cmd: PkgCommand, pkgNames?: string, opts?: an
 	cfger.resolvePlugins();
 
 	const pkgDirList = pkgNames
-		? pkgNames.split(",").map(pkg => MonorepoRootContext.resolvePkgDirName(pkg))
+		? pkgNames.split(",").map(pkg => resolvePkgDirName(pkg))
 		: await getMonorepoRootContext().allPkgDirs();
 
 	await Promise.all(

@@ -1,16 +1,16 @@
 import fs from "fs-extra";
 
+import { resolvePkgDirName } from "@siujs/utils";
+
 import { PkgData } from "../../types";
 import { getMonorepoRootContext, MonorepoRootContext } from "./root";
 
 export class PkgContext {
 	private readonly _pkgName: string;
 	private readonly _parent: MonorepoRootContext;
-	private readonly __cacheKeyPrefix__: string;
 	constructor(pkgName: string, parent: MonorepoRootContext) {
 		this._parent = parent;
 		this._pkgName = pkgName;
-		this.__cacheKeyPrefix__ = `__pkg:${this.pkgName}__`;
 	}
 
 	parent() {
@@ -59,7 +59,7 @@ export class PkgContext {
 const ctxCaches = {} as Record<string, PkgContext>;
 
 export function getPkgContext(pkgName: string) {
-	const dirName = MonorepoRootContext.resolvePkgDirName(pkgName);
+	const dirName = resolvePkgDirName(pkgName);
 
 	if (!ctxCaches[dirName]) {
 		ctxCaches[dirName] = new PkgContext(pkgName, getMonorepoRootContext());
