@@ -1,5 +1,5 @@
 import fs from "fs-extra";
-import path, { resolve } from "path";
+import path from "path";
 
 import { resolvePluginId } from "@siujs/utils";
 
@@ -83,7 +83,7 @@ export class SiuConfiger {
 
 		try {
 			plugins.forEach(plug => {
-				resolve((this._currentPluginId = Array.isArray(plug) ? plug[0] : plug));
+				require((this._currentPluginId = Array.isArray(plug) ? plug[0] : plug));
 			});
 			this._currentPluginId = "";
 			this.isResolved = true;
