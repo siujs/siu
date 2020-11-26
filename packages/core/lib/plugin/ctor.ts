@@ -15,6 +15,7 @@ export class SiuPlugin {
 	constructor(id: string, defaultOpts?: Record<string, any>) {
 		this._id = id;
 		this._opts = defaultOpts || {};
+		this.hooks = {};
 	}
 
 	id() {
