@@ -21,7 +21,7 @@
 		"clean:dist": "rimraf -g packages/*/dist",
 		"clean:dts": "rimraf -g packages/*/dist/{tsconfig.tsbuildinfo,dts} && rimraf -g packages/*/temp",
 		"dts": "node ./scripts/dts.js && npm run clean:dts",
-		"compile": "rollup -c",
+		"compile": "rollup -wc",
 		"build": "npm run clean:dist && rollup -c && npm run dts"
 	},
 	"devDependencies": {
