@@ -34,6 +34,7 @@ export class SiuPlugin {
 		this.hooks[hookId] = this.hooks[hookId] || [];
 		this.hooks[hookId].push(hookHandler);
 	}
+
 	private async callHook(hookKey: string) {
 		const handlers = this.hooks[hookKey];
 
@@ -48,16 +49,19 @@ export class SiuPlugin {
 			await handlers[i](this.ctx, this.opts, next);
 		}
 	}
+
 	private async next(err?: Error) {
 		if (err) {
 			this.ctx.ex(err);
-			await this.callHook(getHookId(this.action, "error"));
-			return;
+			return this.callHook(getHookId(this.action, "error"));
 		}
+
 		if (this.lifecycle === "start") {
-			await this.callHook(getHookId(this.action, (this.lifecycle = "proc")));
-		} else if (this.lifecycle === "proc") {
-			await this.callHook(getHookId(this.action, (this.lifecycle = "complete")));
+			return this.callHook(getHookId(this.action, (this.lifecycle = "proc")));
+		}
+
+		if (this.lifecycle === "proc") {
+			return this.callHook(getHookId(this.action, (this.lifecycle = "complete")));
 		}
 	}
 	/**
