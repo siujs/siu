@@ -1,9 +1,3 @@
-/*
- * @Author: buns
- * @Date: 2020-09-29 18:26:10
- * @LastEditTime: 2020-10-10 09:07:22
- * @Description:
- */
 const path = require("path");
 const fs = require("fs");
 
