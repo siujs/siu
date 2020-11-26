@@ -61,10 +61,15 @@ export interface SiuConfig {
 	)[];
 }
 
-export type HookHandler = (
-	ctx: PlugContext,
-	opts: <T extends any>(key: string) => T,
-	next: (err?: Error) => Promise<void>
-) => Promise<void> | void;
+export type HookHandlerOpts = <T extends any>(key: string) => T;
+export type HookHandlerNext = (err?: Error) => Promise<void>;
+
+export interface HookHandlerApi {
+	ctx: PlugContext;
+	opts: HookHandlerOpts;
+	next: HookHandlerNext;
+}
+
+export type HookHandler = (api: HookHandlerApi) => Promise<void> | void;
 
 export { PlugContext };

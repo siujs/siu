@@ -48,7 +48,11 @@ export class SiuPlugin {
 				: this.next.bind(this);
 
 		for (let i = 0; i < handlers.length; i++) {
-			await handlers[i](this.ctx, this.opts, next);
+			await handlers[i]({
+				ctx: this.ctx,
+				opts: this.opts.bind(this),
+				next
+			});
 		}
 	}
 
