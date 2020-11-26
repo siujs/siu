@@ -42,6 +42,7 @@ export type PkgCmdHookLifecycle = "start" | "proc" | "complete" | "error" | "cle
 export type SiuConfigExcludePkgs = string[] | Record<PkgCommand, string[]>;
 
 export interface SiuConfig {
+	pkgsOrder?: "auto" | "priority" | string[];
 	/**
 	 * 排除某些pkg参与plugin中的流程处理
 	 */

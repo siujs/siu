@@ -59,9 +59,19 @@ export async function applyPlugins(cmd: PkgCommand, pkgNames?: string, opts?: an
 	const cfger = getSiuConfiger();
 	cfger.resolvePlugins();
 
-	const pkgDirList = pkgNames
-		? pkgNames.split(",").map(pkg => resolvePkgDirName(pkg))
-		: await getMonorepoRootContext().allPkgDirs();
+	const pkgsOrder = cfger.get("pkgsOrder") || "auto";
+
+	let pkgDirList: string[];
+
+	if (pkgsOrder === "auto") {
+		pkgDirList = pkgNames
+			? pkgNames.split(",").map(pkg => resolvePkgDirName(pkg))
+			: await getMonorepoRootContext().allPkgDirs();
+	} else if (pkgsOrder === "priority") {
+		pkgDirList = await getMonorepoRootContext().getSortedPkgByPriority();
+	} else {
+		pkgDirList = pkgsOrder as string[];
+	}
 
 	await Promise.all(
 		pluginBuckets

@@ -109,6 +109,38 @@ export class MonorepoRootContext {
 			.forEach(key => delete this.keyValues[key]);
 	}
 
+	async getSortedPkgByPriority() {
+		const pkgDirList = await this.allPkgDirs();
+
+		const kv = {} as Record<string, number>;
+
+		const pkgMetaNames = [] as string[];
+
+		for (let l = pkgDirList.length; l--; ) {
+			const meta = await fs.readJSON(path.resolve(ctx.pkgsRoot(), pkgDirList[l], "package.json"));
+			pkgMetaNames.push(meta.name);
+			if (!kv[meta.name]) {
+				kv[meta.name] = 0;
+			}
+			if (meta.dependencies) {
+				Object.keys(meta.dependencies).reduce((prev, cur) => {
+					prev[cur] = kv[meta.name] + 1;
+					return prev;
+				}, kv);
+			}
+		}
+
+		return Object.keys(kv)
+			.filter(key => pkgMetaNames.includes(key))
+			.reduce((prev, cur) => {
+				prev[kv[cur]] = prev[kv[cur]] || [];
+				prev[kv[cur]].push(resolvePkgDirName(cur));
+				return prev;
+			}, [] as string[][])
+			.reverse()
+			.flat();
+	}
+
 	static getPkgUniqKey(pkgName: string) {
 		return `|__pkg:${resolvePkgDirName(pkgName)}__|`;
 	}

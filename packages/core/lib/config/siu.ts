@@ -20,6 +20,8 @@ export function resolveSiuConfig(cwd: string) {
 		throw new Error("[@siujs/core] Error: `plugins` can't be empty!");
 	}
 
+	siuConfig.pkgsOrder = siuConfig.pkgsOrder || "auto";
+
 	const { plugins } = siuConfig;
 
 	for (let l = plugins.length; l--; ) {
@@ -90,6 +92,10 @@ export class SiuConfiger {
 		} catch (ex) {
 			throw new Error(`[@siujs/core] Error: can't resolve plugins ` + ex);
 		}
+	}
+
+	get(key: keyof SiuConfig) {
+		return this._config[key];
 	}
 
 	options(plugId: string) {
