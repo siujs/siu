@@ -30,6 +30,16 @@ export class PlugContext {
 		return this._pkg.parent().keysForPlug(this._pkg.pkgName(), this._id, key, value);
 	}
 
+	/**
+	 *
+	 * 记录异常信息
+	 *
+	 * @param value [可选] 异常的错误对象或者异常文本信息
+	 */
+	ex(value?: Error | string) {
+		return this._pkg.parent().keysForPlug(this._pkg.pkgName(), this._id, "SIU_CATCH_ERR", value);
+	}
+
 	clean() {
 		this._pkg.parent().cleanPlug(this._pkg.pkgName(), this._id);
 	}
