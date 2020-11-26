@@ -66,3 +66,5 @@ export type HookHandler = (
 	opts: <T extends any>(key: string) => T,
 	next: (err?: Error) => Promise<void>
 ) => Promise<void> | void;
+
+export { PlugContext };
