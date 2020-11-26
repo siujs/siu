@@ -63,7 +63,14 @@ program
 	.command("create <pkg>")
 	.option("-d, --deps <deps>", "dependencies of siblings package name, e.g. `pkg1` or `pkg1,pkg2`")
 	.description("Create monorepo's package")
-	.action(async (pkg, cmd) => {});
+	.action(async (pkg, cmd) => {
+		const { runCmd } = require("../dist/index");
+
+		await runCmd("creation", {
+			pkgs: pkg,
+			deps: cmd.deps
+		});
+	});
 
 program
 	.command("add [deps]")
@@ -74,22 +81,34 @@ program
 program
 	.command("doc [pkgs]")
 	.description("Generate docs of target monorepo's package")
-	.action(async (pkgs, cmd) => {});
+	.action(async pkgs => {
+		const { runCmd } = require("../dist/index");
+		await runCmd("genDocs", { pkgs });
+	});
 
 program
 	.command("test [pkgs]")
 	.description("Test single of multiple monorepo's package")
-	.action(async (pkgs, cmd) => {});
+	.action(async pkgs => {
+		const { runCmd } = require("../dist/index");
+		await runCmd("test", { pkgs });
+	});
 
 program
 	.command("build [pkgs]")
 	.description("Build single of multiple monorepo's package")
-	.action(async (pkgs, cmd) => {});
+	.action(async pkgs => {
+		const { runCmd } = require("../dist/index");
+		await runCmd("build", { pkgs });
+	});
 
 program
 	.command("publish")
 	.description("Publish packages")
-	.action(async cmd => {});
+	.action(async () => {
+		const { runCmd } = require("../dist/index");
+		await runCmd("publish", {});
+	});
 
 program.parse(process.argv);
 
