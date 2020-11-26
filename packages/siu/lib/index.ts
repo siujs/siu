@@ -20,6 +20,10 @@ export async function runCmd<T extends CommonOptions>(cmd: PkgCommand | "init", 
 	}
 
 	const { pkgs, ...rest } = options || {};
-
-	await applyPlugins(cmd, pkgs, rest);
+	try {
+		await applyPlugins(cmd, pkgs, rest);
+	} catch (ex) {
+		console.error(ex);
+		process.exit(1);
+	}
 }
