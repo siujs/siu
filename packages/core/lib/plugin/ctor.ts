@@ -50,6 +50,7 @@ export class SiuPlugin {
 	}
 	private async next(err?: Error) {
 		if (err) {
+			this.ctx.ex(err);
 			await this.callHook(getHookId(this.action, "error"));
 			return;
 		}
