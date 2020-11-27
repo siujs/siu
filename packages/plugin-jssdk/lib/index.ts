@@ -1,6 +1,6 @@
 import { plugin } from "@siujs/core";
 
-import { onBuildComplete, onBuildError, onBuildProc, onBuildStart } from "./build";
+import { onBuildClean, onBuildComplete, onBuildError, onBuildProc, onBuildStart } from "./build";
 import { onCreationComplete, onCreationError, onCreationProc, onCreationStart } from "./creation";
 
 const plug = plugin({});
@@ -14,3 +14,4 @@ plug.build.start(onBuildStart);
 plug.build.proc(onBuildProc);
 plug.build.complete(onBuildComplete);
 plug.build.error(onBuildError);
+plug.build.clean(onBuildClean);

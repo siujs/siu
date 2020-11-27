@@ -21,7 +21,7 @@ export async function onCreationStart(api: HookHandlerApi) {
 export async function onCreationProc(api: HookHandlerApi) {
 	const pkgData = api.ctx.currentPkg().pkgData();
 
-	await downloadGit("https://github.com/siujs/tpls", "jssdk", pkgData.path);
+	await downloadGit("https://github.com/siujs/tpls", "jssdk.pkg", pkgData.path);
 
 	/**
 	 * replace placeholder chars
@@ -81,9 +81,12 @@ export async function onCreationProc(api: HookHandlerApi) {
 
 export async function onCreationComplete({ ctx }: HookHandlerApi) {
 	console.log(
-		chalk.green(`${chalk.greenBright("✔")} ${chalk.bold("Created")} ${chalk.bold(ctx.currentPkg().pkgData().name)}!`)
+		chalk.green(
+			`\n✔ Created ${chalk.bold(ctx.currentPkg().pkgData().name)} in ${chalk.bold(
+				ms(Date.now() - ctx.keys<number>("startTime"))
+			)}!`
+		)
 	);
-	console.log(chalk.greenBright(`Done in ${ms(Date.now() - ctx.keys<number>("startTime"))}`));
 }
 
 export async function onCreationError({ ctx }: HookHandlerApi) {
