@@ -111,3 +111,4 @@ export class Config extends ChainedMap<void, any> {
 export * from "./Chainable";
 export * from "./ChainedMap";
 export * from "./ChainedSet";
+export * from "./Output";
