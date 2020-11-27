@@ -39,11 +39,13 @@
     "@siujs/core": "^1.0.0",
     "@siujs/init-app": "^1.0.0",
     "@siujs/utils": "^1.0.0",
+    "chalk": "^4.1.0",
     "commander": "^6.2.0",
     "fs-extra": "^9.0.1",
     "validate-npm-package-name": "^3.0.0"
   },
   "devDependencies": {
-    "@types/fs-extra": "^9.0.4"
+    "@types/fs-extra": "^9.0.4",
+    "@types/validate-npm-package-name": "^3.0.0"
   }
 }
