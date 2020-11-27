@@ -1,0 +1,39 @@
+{
+  "name": "@siujs/plugin-es-packing",
+  "version": "1.0.0",
+  "description": "Support tree-shaking es package, optimize package size",
+  "keywords": [
+    "es",
+    "packing",
+    "siujs"
+  ],
+  "author": "buns <kuafujs@126.com>",
+  "homepage": "https://github.com/siujs/siu",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "directories": {
+    "lib": "lib",
+    "test": "__tests__"
+  },
+  "files": [
+    "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/siujs/siu.git"
+  },
+  "bugs": {
+    "url": "https://github.com/siujs/siu/issues"
+  },
+  "dependencies": {
+    "@siujs/core": "^1.0.0",
+    "@siujs/rollup": "^1.0.0",
+    "chalk": "^4.1.0",
+    "fs-extra": "^9.0.1",
+    "glob": "^7.1.6",
+    "pretty-ms": "^7.0.1"
+  },
+  "devDependencies": {
+    "@types/fs-extra": "^9.0.4"
+  }
+}
