@@ -1,5 +1,7 @@
+import chalk from "chalk";
 import fs from "fs-extra";
 import path from "path";
+import ms from "pretty-ms";
 import { ModuleFormat, rollup } from "rollup";
 import gzipPlugin from "rollup-plugin-gzip";
 import { terser } from "rollup-plugin-terser";
@@ -69,7 +71,7 @@ const TerserOptions = {
 
 const DEFAULT_BUILD_OPTIONS = {
 	allowFormats: ["es", "cjs", "umd", "umd-min"] as TOutputFormatKey[],
-	sizeCheck: true,
+	sizeCalc: true,
 	gzipThreshold: 1024 * 1024 * 10
 } as SiuRollupBuildOption;
 
@@ -86,17 +88,104 @@ function toKB(fileContent: Buffer): string {
 export interface SiuRollupBuildOption {
 	allowFormats?: TOutputFormatKey[];
 	gzipThreshold?: number;
-	sizeCheck?: boolean;
+	sizeCalc?: boolean;
+}
+
+export interface SiuRollupBuilderMonitor {
+	startTime: number;
+	finishedTime: number;
+	eachStartTime: number;
+	eachFinishedTime: number;
+}
+
+export interface SiuRollupBuilderHooks {
+	/**
+	 *
+	 * 自定义转换浏览器环境的配置
+	 *
+	 * @param config browser config or non-browser config
+	 * @param format "browser" | "browser-min" | "module" | "main"
+	 */
+	onConfigTransform: (config: Config, format: TOutputFormatKey, perf: SiuRollupBuilderMonitor) => void | Promise<void>;
+
+	/**
+	 * 构建开始
+	 */
+	onBuildStart?: (opts: SiuRollupBuildOption, perf: SiuRollupBuilderMonitor) => void | Promise<void>;
+
+	/**
+	 * 每个配置构建开始
+	 */
+	onEachBuildStart?: (config: Config, perf: SiuRollupBuilderMonitor) => void | Promise<void>;
+
+	/**
+	 * 每个配置构建完成
+	 */
+	onEachBuildFinished?: (config: Config, perf: SiuRollupBuilderMonitor) => void | Promise<void>;
+
+	/**
+	 * 构建完成时的调用
+	 */
+	onBuildFinished?: (perf: SiuRollupBuilderMonitor) => void | Promise<void>;
+
+	/**
+	 * 构建发生异常时候的处理
+	 *
+	 * @param ex - 异常信息
+	 */
+	onBuildError?: (ex: Error) => void | Promise<void>;
+
+	/**
+	 * 构建发生异常时候的处理
+	 *
+	 * @param ex - 异常信息
+	 */
+	onSizeCalced?: (sizeInfo: BuilderSizeInfo) => void | Promise<void>;
+}
+
+const DEFAULT_HOOKS = {
+	onConfigTransform() {},
+	onEachBuildStart(config: Config) {
+		const outputs = config.toOutput();
+		console.log(
+			chalk.cyan(
+				`bundles ${chalk.bold(config.get("input"))} → ${outputs.map(output => chalk.bold(output.file)).join(",")}`
+			)
+		);
+	},
+	onEachBuildFinished(config: Config, perf: SiuRollupBuilderMonitor) {
+		const outputs = config.toOutput();
+		console.log(
+			chalk.green(
+				`created ${outputs.map(output => chalk.bold(output.file)).join(",")} in ${chalk.bold(
+					ms(Date.now() - perf.eachStartTime)
+				)}`
+			)
+		);
+	},
+	onSizeCalced(sizeInfo: BuilderSizeInfo) {
+		console.log(
+			`min:${chalk.green(sizeInfo.mini)} / gzip:${chalk.green(sizeInfo.gzip)} / brotli:${chalk.green(sizeInfo.brotli)}`
+		);
+	}
+} as SiuRollupBuilderHooks;
+
+export interface BuilderSizeInfo {
+	mini: string;
+	gzip: string;
+	brotli: string;
 }
 
 export class SiuRollupBuilder {
 	protected pkgData: PkgData;
 	protected config: Config;
 	protected browserConfig: Config;
-	constructor(pkgData: PkgData) {
+	protected hooks: SiuRollupBuilderHooks;
+	constructor(pkgData: PkgData, hooks: SiuRollupBuilderHooks) {
 		this.pkgData = pkgData;
 		this.config = new Config();
 		this.browserConfig = new Config();
+		this.hooks = { ...DEFAULT_HOOKS, ...hooks };
 	}
 	private initBrowserConfig(mini?: boolean) {
 		const config = this.browserConfig;
@@ -108,6 +197,7 @@ export class SiuRollupBuilder {
 				.output("umd-min")
 				.format(FormatMap["umd-min"])
 				.exports("named")
+				.name(this.pkgData.umdName)
 				.file(path.resolve(this.pkgData.path, `dist/${this.pkgData.dirName}.min.js`))
 				.plugin("gzip")
 				.use(gzipPlugin)
@@ -127,6 +217,7 @@ export class SiuRollupBuilder {
 				.output("umd")
 				.format(FormatMap.umd)
 				.exports("named")
+				.name(this.pkgData.umdName)
 				.file(path.resolve(this.pkgData.path, `dist/${this.pkgData.dirName}.js`));
 		}
 
@@ -182,34 +273,8 @@ export class SiuRollupBuilder {
 			mini: minSize,
 			gzip: gzippedSize,
 			brotli: compressedSize
-		};
+		} as BuilderSizeInfo;
 	}
-
-	/**
-	 *
-	 * 自定义转换浏览器环境的配置
-	 *
-	 * @param config browser config or non-browser config
-	 * @param format "browser" | "browser-min" | "module" | "main"
-	 */
-	protected onConfigTransform(config: Config, format: TOutputFormatKey): void | Promise<void> {}
-
-	/**
-	 * 构建开始
-	 */
-	protected onBuildStart(opts: SiuRollupBuildOption): void | Promise<void> {}
-
-	/**
-	 * 构建完成时的调用
-	 */
-	protected onBuildFinished(): void | Promise<void> {}
-
-	/**
-	 * 构建发生异常时候的处理
-	 *
-	 * @param ex - 异常信息
-	 */
-	protected onBuildError(ex: Error): void | Promise<void> {}
 
 	/**
 	 *
@@ -224,39 +289,55 @@ export class SiuRollupBuilder {
 				...(opts || {})
 			};
 
-			const configs = new Set();
+			const configs = [] as Config[];
+
+			const monitors = {
+				startTime: Date.now()
+			} as SiuRollupBuilderMonitor;
 
 			await Promise.all(
 				opts.allowFormats.map(format => {
 					switch (format) {
 						case "umd-min":
-							configs.add(this.browserConfig);
-							return this.onConfigTransform(this.initBrowserConfig(true), format);
+							configs[0] = this.browserConfig;
+							return this.hooks.onConfigTransform(this.initBrowserConfig(true), format, monitors);
 						case "umd":
-							configs.add(this.browserConfig);
+							configs[0] = this.browserConfig;
 							this.initBrowserConfig();
-							return this.onConfigTransform(this.initBrowserConfig(), format);
+							return this.hooks.onConfigTransform(this.initBrowserConfig(), format, monitors);
 						case "cjs":
 						case "es":
-							configs.add(this.config);
+							configs[1] = this.config;
 						default:
-							return this.onConfigTransform(this.initConfig(format), format);
+							return this.hooks.onConfigTransform(this.initConfig(format), format, monitors);
 					}
 				})
 			);
 
-			const finalConfigs = Array.from(configs) as Config[];
+			const finalConfigs = configs.filter(Boolean);
 
-			await this.onBuildStart(opts);
+			this.hooks.onBuildStart && (await this.hooks.onBuildStart(opts, monitors));
 
 			for (let l = finalConfigs.length; l--; ) {
+				monitors.eachStartTime = Date.now();
+				this.hooks.onEachBuildStart && (await this.hooks.onEachBuildStart(finalConfigs[l], monitors));
+
 				const bundle = await rollup(finalConfigs[l].toInput());
 				await Promise.all(finalConfigs[l].toOutput().map(bundle.write));
+
+				monitors.eachFinishedTime = Date.now();
+				this.hooks.onEachBuildFinished && (await this.hooks.onEachBuildFinished(finalConfigs[l], monitors));
 			}
 
-			await this.onBuildFinished();
+			if (opts.sizeCalc && opts.allowFormats.includes("umd-min")) {
+				const sizeInfo = await SiuRollupBuilder.checkSize(finalConfigs[0].output("umd-min").get("file"));
+				this.hooks.onSizeCalced && (await this.hooks.onSizeCalced(sizeInfo));
+			}
+
+			monitors.finishedTime = Date.now();
+			this.hooks.onBuildFinished && (await this.hooks.onBuildFinished(monitors));
 		} catch (ex) {
-			await this.onBuildError(ex);
+			this.hooks.onBuildError ? await this.hooks.onBuildError(ex) : console.error(ex);
 		}
 	}
 }
