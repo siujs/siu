@@ -65,7 +65,7 @@ export class SiuConfiger {
 		for (let l = plugins.length; l--; ) {
 			const plug = plugins[l];
 			if (Array.isArray(plug)) {
-				if (plugId === plug[0] && validFromExcludePkgs(plug[1].excludePkgs)) {
+				if (plugId === plug[0] && plug[1] && plug[1].excludePkgs && validFromExcludePkgs(plug[1].excludePkgs)) {
 					return true;
 				}
 			}
