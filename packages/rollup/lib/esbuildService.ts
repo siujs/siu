@@ -1,5 +1,6 @@
 import chalk from "chalk";
 import { Loader, Message, Service, startService, TransformOptions } from "esbuild";
+import fs from "fs";
 import path from "path";
 import { Plugin } from "rollup";
 
@@ -112,11 +113,32 @@ export function asRollupPlugin() {
 		const INCLUDE_REGEXP = new RegExp(`\\.(${extensions.map(ext => ext.slice(1)).join("|")})$`);
 		const filter = createFilter(include || INCLUDE_REGEXP, exclude || /node_modules/);
 
+		const resolveFile = (resolved: string, index = false) => {
+			for (const ext of extensions) {
+				const file = index ? path.join(resolved, `index${ext}`) : `${resolved}${ext}`;
+				if (fs.existsSync(file)) return file;
+			}
+			return null;
+		};
+
 		return {
 			name: "esbuild",
 			async buildStart() {
 				if (!_service) {
 					_service = await startService();
+				}
+			},
+
+			resolveId(importee, importer) {
+				if (importer && importee[0] === ".") {
+					const resolved = path.resolve(importer ? path.dirname(importer) : process.cwd(), importee);
+
+					let file = resolveFile(resolved);
+					if (file) return file;
+					if (!file && fs.existsSync(resolved) && fs.statSync(resolved).isDirectory()) {
+						file = resolveFile(resolved, true);
+						if (file) return file;
+					}
 				}
 			},
 			transform(code: string, id: string) {
