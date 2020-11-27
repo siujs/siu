@@ -88,6 +88,10 @@ export class Output<T> extends ChainedMap<T, any> {
 				prev[cur] = this.get(cur);
 				return prev;
 			}, {} as Record<string, any>),
+			plugins: this.plugins
+				.values()
+				.map(item => item.toConfig())
+				.filter(Boolean),
 			globals: this.globals.entries() as GlobalsOption,
 			paths: this.paths.entries() as OptionsPaths
 		});
