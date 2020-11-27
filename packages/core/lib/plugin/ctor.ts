@@ -80,16 +80,20 @@ export class SiuPlugin {
 		return this._opts[this.action]?.[key] as T;
 	}
 
+	private hasHook(hookId: string) {
+		return this.hooks[hookId] && this.hooks[hookId].length;
+	}
+
 	/**
 	 *
 	 * 执行hooks
 	 *
-	 * @param pkgDirName package id
+	 * @param pkgName package full name
 	 * @param action 当前action
 	 * @param actionOpts 当前运行类别携带的用户配置
 	 */
-	async apply(pkgDirName: string, action: PkgCommand, actionOpts: Record<string, any> = {}) {
-		this.ctx = getCurrentPlugContext(this._id, pkgDirName);
+	async apply(pkgName: string, action: PkgCommand, actionOpts: Record<string, any> = {}) {
+		this.ctx = getCurrentPlugContext(this._id, pkgName);
 
 		this.action = action;
 
@@ -98,17 +102,24 @@ export class SiuPlugin {
 			...actionOpts
 		};
 
+		const hasStartHook = this.hasHook(getHookId(action, "start"));
+		const hasProcHook = this.hasHook(getHookId(action, "proc"));
+
+		const hasHook = hasStartHook || hasProcHook;
+
+		if (!hasHook) return;
+
 		console.log(chalk.hex("#4c91ff").bold(`\n[${this.ctx.id()}:${action}] ======\n`));
 
 		try {
-			await this.callHook(getHookId(action, (this.lifecycle = "start")));
+			await this.callHook(getHookId(action, (this.lifecycle = hasStartHook ? "start" : "proc")));
 		} catch (ex) {
 			console.log(chalk.redBright(`\n[${this._id}] ERROR:`));
 			this.ctx.ex(ex);
 			await this.callHook(getHookId(action, "error"));
 		}
 
-		console.log(chalk.hex("#4c91ff").bold(`====== [${this.ctx.id()}:${action}]\n`));
+		console.log(chalk.hex("#4c91ff").bold(`\n====== [${this.ctx.id()}:${action}]\n`));
 	}
 	/**
 	 *
