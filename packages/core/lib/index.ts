@@ -63,10 +63,18 @@ export async function applyPlugins(cmd: PkgCommand, pkgNames?: string, opts?: an
 
 	let pkgDirList: string[];
 
+	const ctx = getMonorepoRootContext();
+
+	const allPkgMetas = await ctx.allPkgMetas();
+
+	if (cmd === "creation" && pkgNames) {
+		pkgNames.split(",").forEach(pkg => {
+			allPkgMetas[resolvePkgDirName(pkg)] = { name: pkg };
+		});
+	}
+
 	if (pkgsOrder === "auto") {
-		pkgDirList = pkgNames
-			? pkgNames.split(",").map(pkg => resolvePkgDirName(pkg))
-			: await getMonorepoRootContext().allPkgDirs();
+		pkgDirList = pkgNames ? pkgNames.split(",").map(resolvePkgDirName) : await getMonorepoRootContext().allPkgDirs();
 	} else if (pkgsOrder === "priority") {
 		pkgDirList = await getMonorepoRootContext().getSortedPkgByPriority();
 	} else {
@@ -79,7 +87,7 @@ export async function applyPlugins(cmd: PkgCommand, pkgNames?: string, opts?: an
 				pkgDirList
 					.filter(pkgDir => !cfger.isPkgDisable(pkgDir, cmd, plug.id()))
 					.map(pkgDir =>
-						plug.apply(pkgDir, cmd, {
+						plug.apply(allPkgMetas[pkgDir].name, cmd, {
 							...(opts || {}),
 							...(cfger.options(plug.id())?.[cmd] ?? {})
 						})

@@ -28,7 +28,25 @@ export class MonorepoRootContext {
 	 * 获取当前
 	 */
 	async allPkgDirs() {
-		return await fs.readdir(this.pkgsRoot());
+		const pkgsRoot = this.pkgsRoot();
+
+		const dirs = await fs.readdir(pkgsRoot);
+
+		return dirs.filter(dir => fs.statSync(path.resolve(pkgsRoot, dir)).isDirectory());
+	}
+
+	async allPkgMetas() {
+		const pkgsRoot = this.pkgsRoot();
+
+		const pkgDirs = await this.allPkgDirs();
+
+		const kv = {} as Record<string, Record<string, any>>;
+
+		for (let l = pkgDirs.length; l--; ) {
+			kv[pkgDirs[l]] = await fs.readJSON(path.resolve(pkgsRoot, pkgDirs[l], "package.json"));
+		}
+
+		return kv;
 	}
 
 	/**
@@ -134,7 +152,7 @@ export class MonorepoRootContext {
 			.filter(key => pkgMetaNames.includes(key))
 			.reduce((prev, cur) => {
 				prev[kv[cur]] = prev[kv[cur]] || [];
-				prev[kv[cur]].push(resolvePkgDirName(cur));
+				prev[kv[cur]].push(cur);
 				return prev;
 			}, [] as string[][])
 			.reverse()
