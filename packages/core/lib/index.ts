@@ -78,7 +78,12 @@ export async function applyPlugins(cmd: PkgCommand, pkgNames?: string, opts?: an
 			.map(plug =>
 				pkgDirList
 					.filter(pkgDir => !cfger.isPkgDisable(pkgDir, cmd, plug.id()))
-					.map(pkgDir => plug.apply(pkgDir, cmd, opts || {}))
+					.map(pkgDir =>
+						plug.apply(pkgDir, cmd, {
+							...(opts || {}),
+							...(cfger.options(plug.id())?.[cmd] ?? {})
+						})
+					)
 			)
 			.flat()
 	);
