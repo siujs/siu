@@ -217,11 +217,11 @@ export class SiuRollupBuilder {
 	 *
 	 * @param opts 构建时的相关设置
 	 */
-	async build(opts: SiuRollupBuildOption) {
+	async build(opts?: SiuRollupBuildOption) {
 		try {
 			opts = {
 				...DEFAULT_BUILD_OPTIONS,
-				...opts
+				...(opts || {})
 			};
 
 			const configs = new Set();
