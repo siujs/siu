@@ -42,6 +42,22 @@ export type PkgCmdHookLifecycle = "start" | "proc" | "complete" | "error" | "cle
 export type SiuConfigExcludePkgs = string[] | Record<PkgCommand, string[]>;
 
 export interface SiuConfig {
+	/**
+	 *
+	 *  指定pkgs(目录名称)排序来控制插件的执行顺序
+	 *
+	 * 	选项: "auto" | "priority" | custom stirng array
+	 *
+	 *  默认值: "auto"
+	 *
+	 *  提示:
+	 *    auto: 默认按照package的目录名称排序
+	 *    priority: 通过分析当前packages之间依赖关系形成的优先级数组(从高到低)
+	 *    string[]: 自定义排序
+	 *
+	 *  使用场景:
+	 *    想通过esbuild来快速打包ts项目, 但是这个时候又需要dts声明的情况下，可以利用这个优先级使用(ts --emitDeclarationOnly + @microsoft/api-extractor)
+	 */
 	pkgsOrder?: "auto" | "priority" | string[];
 	/**
 	 * 排除某些pkg参与plugin中的流程处理
