@@ -1,9 +1,11 @@
 #!/usr/bin/env node
 
+const chalk = require("chalk");
 const fs = require("fs-extra");
 const path = require("path");
 const program = require("commander");
-const validProjectName = require("validate-npm-package-name");
+
+const { validPkgName, isPkgExists, findUnfoundPkgs, runCmd } = require("../dist/index");
 
 program.version(fs.readJSONSync(path.resolve(__dirname, "../package.json")).version);
 
@@ -22,22 +24,7 @@ program
 
 		const name = isCurrent ? path.basename(usrStdin.cwd) : app;
 
-		const result = validProjectName(name);
-
-		if (!result.validForNewPackages) {
-			console.error(chalk.red(`Invalid name: "${name}"`));
-
-			result.errors &&
-				result.errors.forEach(err => {
-					console.error(chalk.red.dim("Error: " + err));
-				});
-
-			result.warnings &&
-				result.warnings.forEach(warn => {
-					console.error(chalk.red.dim("Warning: " + warn));
-				});
-			process.exit(1);
-		}
+		validPkgName(name);
 
 		if (isCurrent) {
 			const { ok } = await prompt([
@@ -54,8 +41,6 @@ program
 			return;
 		}
 
-		const { runCmd } = require("../dist/index");
-
 		await runCmd("init", usrStdin);
 	});
 
@@ -64,7 +49,14 @@ program
 	.option("-d, --deps <deps>", "dependencies of siblings package name, e.g. `pkg1` or `pkg1,pkg2`")
 	.description("Create monorepo's package")
 	.action(async (pkg, cmd) => {
-		const { runCmd } = require("../dist/index");
+		validPkgName(pkg);
+
+		const exists = await isPkgExists(pkg);
+
+		if (exists) {
+			console.log(chalk.red.bold(`[siu] ERROR: \`${pkg}\` already exists! `));
+			return;
+		}
 
 		await runCmd("creation", {
 			pkgs: pkg,
@@ -82,7 +74,13 @@ program
 	.command("doc [pkgs]")
 	.description("Generate docs of target monorepo's package")
 	.action(async pkgs => {
-		const { runCmd } = require("../dist/index");
+		const arr = findUnfoundPkgs(pkgs);
+
+		if (arr.length) {
+			console.log(chalk.red.bold(`[siu] ERROR: \`${arr.join(",")}\` does not exists!`));
+			return;
+		}
+
 		await runCmd("genDocs", { pkgs });
 	});
 
@@ -90,7 +88,13 @@ program
 	.command("test [pkgs]")
 	.description("Test single of multiple monorepo's package")
 	.action(async pkgs => {
-		const { runCmd } = require("../dist/index");
+		const arr = findUnfoundPkgs(pkgs);
+
+		if (arr.length) {
+			console.log(chalk.red.bold(`[siu] ERROR: \`${arr.join(",")}\` does not exists!`));
+			return;
+		}
+
 		await runCmd("test", { pkgs });
 	});
 
@@ -98,7 +102,13 @@ program
 	.command("build [pkgs]")
 	.description("Build single of multiple monorepo's package")
 	.action(async pkgs => {
-		const { runCmd } = require("../dist/index");
+		const arr = findUnfoundPkgs(pkgs);
+
+		if (arr.length) {
+			console.log(chalk.red.bold(`[siu] ERROR: \`${arr.join(",")}\` does not exists!`));
+			return;
+		}
+
 		await runCmd("build", { pkgs });
 	});
 
@@ -106,9 +116,17 @@ program
 	.command("publish")
 	.description("Publish packages")
 	.action(async () => {
-		const { runCmd } = require("../dist/index");
 		await runCmd("publish", {});
 	});
+
+program
+	.command("glint")
+	.description("Lint for git action")
+	.option(
+		"-h, --hook <hook>",
+		"Git lifecycle hook: pre-commit、prepare-commit-msg、commit-msg、post-commit、post-merge"
+	)
+	.action(async () => {});
 
 program.parse(process.argv);
 
