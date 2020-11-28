@@ -53,10 +53,11 @@ export async function isPkgExists(name: string) {
 }
 
 export async function findUnfoundPkgs(pkgs: string) {
-	const arr = pkgs.split(",");
-
 	const unfoundPkgs = [] as string[];
 
+	if (!pkgs) return unfoundPkgs;
+
+	const arr = pkgs.split(",");
 	let exists: boolean;
 
 	for (let l = arr.length; l--; ) {
