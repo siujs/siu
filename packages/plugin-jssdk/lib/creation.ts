@@ -76,6 +76,8 @@ export async function onCreationProc(api: HookHandlerApi) {
 
 	api.ctx.keys("spinner").stop(true);
 
+	shell.exec("yarn");
+
 	await api.next();
 }
 
