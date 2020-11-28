@@ -11,6 +11,7 @@ interface InitAppOptios {
 	appName: string;
 	template: string;
 	source?: "github" | "gitee";
+	skipInstall?: boolean;
 }
 
 const HostMap = {
@@ -118,7 +119,7 @@ export async function initApp(opts: InitAppOptios) {
 
 	await downloadTpl(opts);
 
-	await installDeps();
+	!opts.skipInstall && (await installDeps());
 
 	console.log(
 		chalk.green(
