@@ -59,7 +59,7 @@ export async function applyPlugins(cmd: PkgCommand, pkgNames?: string, opts?: an
 	const cfger = getSiuConfiger();
 	cfger.resolvePlugins();
 
-	const pkgsOrder = cfger.get("pkgsOrder") || "auto";
+	const pkgsOrder = cfger.get("pkgsOrder") || "priority";
 
 	let pkgDirList: string[];
 

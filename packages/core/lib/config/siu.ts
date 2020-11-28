@@ -20,7 +20,7 @@ export function resolveSiuConfig(cwd: string) {
 		throw new Error("[@siujs/core] Error: `plugins` can't be empty!");
 	}
 
-	siuConfig.pkgsOrder = siuConfig.pkgsOrder || "auto";
+	siuConfig.pkgsOrder = siuConfig.pkgsOrder || "priority";
 
 	const { plugins } = siuConfig;
 
