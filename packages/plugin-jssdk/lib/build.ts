@@ -63,8 +63,6 @@ export async function onBuildProc({ ctx, opts, next }: HookHandlerApi) {
 }
 
 export async function onBuildComplete({ ctx }: HookHandlerApi) {
-	console.log(ctx.currentPkg().pkgData());
-
 	console.log(
 		chalk.green(
 			`\n✔ Builded ${chalk.bold(ctx.currentPkg().pkgData().name)} in ${chalk.bold(
