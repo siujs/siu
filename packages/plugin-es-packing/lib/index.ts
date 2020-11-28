@@ -34,6 +34,19 @@ plug.build.proc(async ({ ctx, opts, next }: HookHandlerApi) => {
 	const destESDir = path.resolve(pkgData.path, opts<string>("targetDir"));
 
 	const bablePluginImportBuilder = new SiuRollupBuilder(pkgData, {
+		onEachBuildStart(config: Config) {
+			const outputs = config.toOutput();
+
+			const input = destESDir + "/**/*.ts";
+
+			console.log(
+				chalk.cyan(
+					`bundles ${chalk.bold(input)} → ${outputs
+						.map(output => chalk.bold(output.file || path.resolve(output.dir, <string>output.entryFileNames)))
+						.join(",")}`
+				)
+			);
+		},
 		onConfigTransform(config: Config, format: TOutputFormatKey) {
 			if (format !== "es") return;
 

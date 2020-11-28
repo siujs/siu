@@ -109,7 +109,7 @@ export class SiuPlugin {
 
 		if (!hasHook) return;
 
-		console.log(chalk.hex("#4c91ff").bold(`\n[${this.ctx.id()}:${action}] ======\n`));
+		console.log(chalk.hex("#4c91ff").bold(`[${pkgName}:${this.ctx.id()}:${action}] ============\n`));
 
 		try {
 			await this.callHook(getHookId(action, (this.lifecycle = hasStartHook ? "start" : "proc")));
@@ -119,7 +119,7 @@ export class SiuPlugin {
 			await this.callHook(getHookId(action, "error"));
 		}
 
-		console.log(chalk.hex("#4c91ff").bold(`\n====== [${this.ctx.id()}:${action}]\n`));
+		console.log(chalk.hex("#4c91ff").bold(`\n============ [${pkgName}:${this.ctx.id()}:${action}]\n`));
 	}
 	/**
 	 *
