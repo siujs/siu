@@ -152,7 +152,7 @@ export class MonorepoRootContext {
 			.filter(key => pkgMetaNames.includes(key))
 			.reduce((prev, cur) => {
 				prev[kv[cur]] = prev[kv[cur]] || [];
-				prev[kv[cur]].push(cur);
+				prev[kv[cur]].push(resolvePkgDirName(cur));
 				return prev;
 			}, [] as string[][])
 			.reverse()
