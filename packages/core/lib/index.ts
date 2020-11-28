@@ -81,26 +81,21 @@ export async function applyPlugins(cmd: PkgCommand, pkgNames?: string, opts?: an
 		pkgDirList = pkgsOrder as string[];
 	}
 
-	await Promise.all(
-		pluginBuckets
-			.map(plug =>
-				pkgDirList
-					.filter(pkgDir => !cfger.isPkgDisable(pkgDir, cmd, plug.id()))
-					.map(pkgDir =>
-						plug.apply(allPkgMetas[pkgDir].name, cmd, {
-							...(opts || {}),
-							...(cfger.options(plug.id())?.[cmd] ?? {})
-						})
-					)
-			)
-			.flat()
-	);
+	const kv = pluginBuckets.reduce((prev, cur) => {
+		prev[cur.id()] = pkgDirList.filter(pkgDir => !cfger.isPkgDisable(pkgDir, cmd, cur.id()));
+		return prev;
+	}, {} as Record<string, string[]>);
 
-	await Promise.all(
-		pluginBuckets
-			.map(plug =>
-				pkgDirList.filter(pkgDir => !cfger.isPkgDisable(pkgDir, cmd, plug.id())).map(pkgDir => plug.clean(pkgDir))
-			)
-			.flat()
-	);
+	for (let i = 0; i < pluginBuckets.length; i++) {
+		const plug = pluginBuckets[i];
+		const allowedPkgDirList = kv[plug.id()];
+		for (let j = 0; j < allowedPkgDirList.length; j++) {
+			await plug.apply(allPkgMetas[allowedPkgDirList[j]].name, cmd, {
+				...(opts || {}),
+				...(cfger.options(plug.id())?.[cmd] ?? {})
+			});
+		}
+	}
+
+	await Promise.all(pluginBuckets.map(plug => kv[plug.id()].map(pkgDir => plug.clean(pkgDir))).flat());
 }
