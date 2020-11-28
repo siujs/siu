@@ -46,10 +46,12 @@ plug.build.proc(async ({ ctx, opts, next }: HookHandlerApi) => {
 				.input(destESFiles)
 				.output(format)
 				.format("es")
-				.file("")
-				.entryFileNames(path.resolve(this.pkgData.path, "dist/es/[name].js"))
+				.dir(path.resolve(pkgData.path, "./dist/es"))
+				.entryFileNames("[name].js")
+				.set("file", void 0)
+				.end()
 				.plugin("esbuild")
-				.use(asRollupPlugin(), [{ sourcemap: false, loaders: { ".ts": "ts" } }]);
+				.use(asRollupPlugin(), [{ sourcemap: true, loaders: { ".ts": "ts" } }]);
 		}
 	});
 
@@ -64,10 +66,11 @@ plug.build.proc(async ({ ctx, opts, next }: HookHandlerApi) => {
 plug.build.complete(({ ctx }: HookHandlerApi) => {
 	console.log(
 		chalk.green(
-			`${chalk.greenBright("✔")} ${chalk.bold("Builded")} ${chalk.bold(ctx.currentPkg().pkgData().name)}/dist/es/* !`
+			`\n✔ Builded ${chalk.bold(ctx.currentPkg().pkgData().name)} in ${chalk.bold(
+				ms(Date.now() - ctx.keys<number>("startTime"))
+			)}!`
 		)
 	);
-	console.log(chalk.greenBright(`Done in ${ms(Date.now() - ctx.keys<number>("startTime"))}`));
 });
 
 plug.build.error(({ ctx }: HookHandlerApi) => {
