@@ -7,6 +7,9 @@ import gzipPlugin from "rollup-plugin-gzip";
 import { terser } from "rollup-plugin-terser";
 import { brotliCompressSync, gzipSync } from "zlib";
 
+import commonjs from "@rollup/plugin-commonjs";
+import nodeResolve from "@rollup/plugin-node-resolve";
+import replace from "@rollup/plugin-replace";
 import { camelize } from "@siujs/utils";
 
 import { Config } from "../config";
@@ -147,9 +150,18 @@ const DEFAULT_HOOKS = {
 	onConfigTransform() {},
 	onEachBuildStart(config: Config) {
 		const outputs = config.toOutput();
+
+		let input = config.get("input");
+
+		if (typeof input !== "string") {
+			input = Object.values(input).join(",");
+		}
+
 		console.log(
 			chalk.cyan(
-				`bundles ${chalk.bold(config.get("input"))} → ${outputs.map(output => chalk.bold(output.file)).join(",")}`
+				`bundles ${chalk.bold(input)} → ${outputs
+					.map(output => chalk.bold(output.file || path.resolve(output.dir, <string>output.entryFileNames)))
+					.join(",")}`
 			)
 		);
 	},
@@ -157,9 +169,9 @@ const DEFAULT_HOOKS = {
 		const outputs = config.toOutput();
 		console.log(
 			chalk.green(
-				`created ${outputs.map(output => chalk.bold(output.file)).join(",")} in ${chalk.bold(
-					ms(Date.now() - perf.eachStartTime)
-				)}`
+				`created ${outputs
+					.map(output => chalk.bold(output.file || path.resolve(output.dir, <string>output.entryFileNames)))
+					.join(",")} in ${chalk.bold(ms(Date.now() - perf.eachStartTime))}`
 			)
 		);
 	},
@@ -176,6 +188,8 @@ export interface BuilderSizeInfo {
 	brotli: string;
 }
 
+const extensions = [".js", ".jsx", ".ts", ".tsx"];
+
 export class SiuRollupBuilder {
 	protected pkgData: PkgData;
 	protected config: Config;
@@ -187,10 +201,33 @@ export class SiuRollupBuilder {
 		this.browserConfig = new Config();
 		this.hooks = { ...DEFAULT_HOOKS, ...hooks };
 	}
-	private initBrowserConfig(mini?: boolean) {
-		const config = this.browserConfig;
 
-		config.input(path.resolve(this.pkgData.path, "lib/index.ts"));
+	private initCommonConfig(config: Config) {
+		config
+			.input(path.resolve(this.pkgData.path, "lib/index.ts"))
+			.plugin("nodeResolve")
+			.use(nodeResolve, [
+				{
+					extensions,
+					mainFields: ["module", "main", "browser"]
+				}
+			])
+			.end()
+			.plugin("commonjs")
+			.use(commonjs)
+			.end()
+			.plugin("replace")
+			.use(replace, [
+				{
+					"process.env.NODE_ENV": JSON.stringify("production")
+				}
+			]);
+
+		return config;
+	}
+
+	private initBrowserConfig(mini?: boolean) {
+		const config = this.initCommonConfig(this.browserConfig);
 
 		if (mini) {
 			config
@@ -225,9 +262,7 @@ export class SiuRollupBuilder {
 	}
 
 	private initConfig(format: "cjs" | "es") {
-		const config = this.config;
-
-		config.input(path.resolve(this.pkgData.path, "lib/index.ts"));
+		const config = this.initCommonConfig(this.config);
 
 		config
 			.output(format)
