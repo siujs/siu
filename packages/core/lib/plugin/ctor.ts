@@ -128,7 +128,7 @@ export class SiuPlugin {
 	 * @param pkgDirName dirname of package
 	 */
 	async clean(pkgDirName: string) {
-		this.ctx = this.ctx || getCurrentPlugContext(this._id, pkgDirName);
+		this.ctx = getCurrentPlugContext(this._id, pkgDirName);
 		await this.callHook(getHookId(this.action, "clean"));
 	}
 }
