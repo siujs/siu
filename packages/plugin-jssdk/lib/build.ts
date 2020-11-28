@@ -87,7 +87,8 @@ export async function onBuildClean({ ctx }: HookHandlerApi) {
 	const pkgData = ctx.currentPkg().pkgData();
 
 	await Promise.all([
-		fs.remove(path.resolve(pkgData.path, "./dist/dts")),
-		fs.remove(path.resolve(pkgData.path, "./temp"))
+		fs.remove(path.resolve(pkgData.path, "./dts_dist")),
+		fs.remove(path.resolve(pkgData.path, "./temp")),
+		fs.remove(path.resolve(pkgData.path, "./tsconfig.tsbuildinfo"))
 	]);
 }
