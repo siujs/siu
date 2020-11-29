@@ -61,7 +61,7 @@ export async function applyPlugins(cmd: PkgCommand, pkgNames?: string, opts?: an
 
 	const pkgsOrder = cfger.get("pkgsOrder") || "priority";
 
-	let pkgDirList: string[];
+	let pkgDirList: string[] = [];
 
 	const ctx = getMonorepoRootContext();
 
@@ -69,33 +69,45 @@ export async function applyPlugins(cmd: PkgCommand, pkgNames?: string, opts?: an
 
 	if (cmd === "creation" && pkgNames) {
 		pkgNames.split(",").forEach(pkg => {
-			allPkgMetas[resolvePkgDirName(pkg)] = { name: pkg };
+			pkgDirList.push(resolvePkgDirName(pkg));
+			allPkgMetas[pkgDirList[pkgDirList.length - 1]] = { name: pkg };
 		});
-	}
-
-	if (pkgsOrder === "auto") {
-		pkgDirList = pkgNames ? pkgNames.split(",").map(resolvePkgDirName) : await getMonorepoRootContext().allPkgDirs();
-	} else if (pkgsOrder === "priority") {
-		pkgDirList = await getMonorepoRootContext().getSortedPkgByPriority();
 	} else {
-		pkgDirList = pkgsOrder as string[];
+		if (pkgsOrder === "auto") {
+			pkgDirList = await ctx.allPkgDirs();
+		} else if (pkgsOrder === "priority") {
+			pkgDirList = await ctx.getSortedPkgByPriority();
+		} else {
+			pkgDirList = pkgsOrder as string[];
+		}
+
+		if (pkgNames) {
+			const pkgs = pkgNames.split(",").map(resolvePkgDirName);
+			pkgDirList = pkgDirList.filter(dir => pkgs.includes(dir));
+		}
 	}
 
-	const kv = pluginBuckets.reduce((prev, cur) => {
-		prev[cur.id()] = pkgDirList.filter(pkgDir => !cfger.isPkgDisable(pkgDir, cmd, cur.id()));
-		return prev;
-	}, {} as Record<string, string[]>);
+	const kv = pkgDirList.reduce((prev, cur) => {
+		const plugs = pluginBuckets.filter(plug => !cfger.isPkgDisable(cur, cmd, plug.id()));
 
-	for (let i = 0; i < pluginBuckets.length; i++) {
-		const plug = pluginBuckets[i];
-		const allowedPkgDirList = kv[plug.id()];
-		for (let j = 0; j < allowedPkgDirList.length; j++) {
-			await plug.apply(allPkgMetas[allowedPkgDirList[j]].name, cmd, {
+		if (plugs && plugs.length) {
+			prev[cur] = plugs;
+		}
+
+		return prev;
+	}, {} as Record<string, SiuPlugin[]>);
+
+	const pkgs = Object.keys(kv);
+
+	for (let i = 0; i < pkgs.length; i++) {
+		const plugs = kv[pkgs[i]];
+		for (let j = 0; j < plugs.length; j++) {
+			await plugs[j].apply(allPkgMetas[pkgs[i]].name, cmd, {
 				...(opts || {}),
-				...(cfger.options(plug.id())?.[cmd] ?? {})
+				...(cfger.options(plugs[j].id())?.[cmd] ?? {})
 			});
 		}
 	}
 
-	await Promise.all(pluginBuckets.map(plug => kv[plug.id()].map(pkgDir => plug.clean(pkgDir))).flat());
+	await Promise.all(pkgs.map(pkg => kv[pkg].map(plug => plug.clean(pkg))).flat());
 }
