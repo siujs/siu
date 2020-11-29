@@ -34,6 +34,7 @@ export async function onBuildProc({ ctx, opts, next }: HookHandlerApi) {
 				{
 					sourcemap: true,
 					loaders: {
+						".js": "js",
 						".ts": "ts"
 					}
 				}
