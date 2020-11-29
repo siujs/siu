@@ -9,7 +9,8 @@ import { asRollupPlugin, Config, SiuRollupBuilder, stopService, TOutputFormatKey
 
 const plug = plugin({
 	build: {
-		targetDir: "lib"
+		sourceDir: "lib",
+		destDir: "es"
 	}
 });
 
@@ -21,9 +22,11 @@ plug.build.start(async ({ ctx, opts, next }: HookHandlerApi) => {
 		return;
 	}
 
+	const destDir = opts<string>("destDir") || "es";
+
 	ctx.keys("startTime", Date.now());
 
-	await fs.remove(path.resolve(ctx.currentPkg().pkgData().path, "./dist/es"));
+	await fs.remove(path.resolve(ctx.currentPkg().pkgData().path, destDir));
 
 	await next();
 });
@@ -32,6 +35,8 @@ plug.build.proc(async ({ ctx, opts, next }: HookHandlerApi) => {
 	const pkgData = ctx.currentPkg().pkgData();
 
 	const sourceESDirPath = path.resolve(pkgData.path, opts<string>("sourceDir"));
+
+	const destESDir = path.resolve(pkgData.path, opts<string>("destDir") || "es");
 
 	const bablePluginImportBuilder = new SiuRollupBuilder(pkgData, {
 		onEachBuildStart(config: Config) {
@@ -59,7 +64,7 @@ plug.build.proc(async ({ ctx, opts, next }: HookHandlerApi) => {
 				.input(sourceESDirFiles)
 				.output(format)
 				.format("es")
-				.dir(path.resolve(pkgData.path, "./dist/es"))
+				.dir(destESDir)
 				.entryFileNames("[name].js")
 				.set("file", void 0)
 				.end()
