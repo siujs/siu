@@ -14,10 +14,10 @@ const plug = plugin({
 });
 
 plug.build.start(async ({ ctx, opts, next }: HookHandlerApi) => {
-	const targetDir = opts<string>("targetDir");
+	const sourceDir = opts<string>("sourceDir");
 
-	if (!targetDir) {
-		await next(new Error(`ERROR: 'targetDir' options can't be emtpy!`));
+	if (!sourceDir) {
+		await next(new Error(`ERROR: 'sourceDir' options can't be emtpy!`));
 		return;
 	}
 
@@ -31,13 +31,13 @@ plug.build.start(async ({ ctx, opts, next }: HookHandlerApi) => {
 plug.build.proc(async ({ ctx, opts, next }: HookHandlerApi) => {
 	const pkgData = ctx.currentPkg().pkgData();
 
-	const destESDir = path.resolve(pkgData.path, opts<string>("targetDir"));
+	const sourceESDirPath = path.resolve(pkgData.path, opts<string>("sourceDir"));
 
 	const bablePluginImportBuilder = new SiuRollupBuilder(pkgData, {
 		onEachBuildStart(config: Config) {
 			const outputs = config.toOutput();
 
-			const input = destESDir + "/**/*.ts";
+			const input = sourceESDirPath + "/**/*.ts";
 
 			console.log(
 				chalk.cyan(
@@ -50,13 +50,13 @@ plug.build.proc(async ({ ctx, opts, next }: HookHandlerApi) => {
 		onConfigTransform(config: Config, format: TOutputFormatKey) {
 			if (format !== "es") return;
 
-			const destESFiles = glob.sync("**/*.ts", { cwd: destESDir }).reduce((prev, cur) => {
-				prev[cur.replace(".ts", "")] = path.resolve(destESDir, cur);
+			const sourceESDirFiles = glob.sync("**/*.ts", { cwd: sourceESDirPath }).reduce((prev, cur) => {
+				prev[cur.replace(".ts", "")] = path.resolve(sourceESDirPath, cur);
 				return prev;
 			}, {} as Record<string, string>);
 
 			config
-				.input(destESFiles)
+				.input(sourceESDirFiles)
 				.output(format)
 				.format("es")
 				.dir(path.resolve(pkgData.path, "./dist/es"))
@@ -64,7 +64,7 @@ plug.build.proc(async ({ ctx, opts, next }: HookHandlerApi) => {
 				.set("file", void 0)
 				.end()
 				.plugin("esbuild")
-				.use(asRollupPlugin(), [{ sourcemap: true, loaders: { ".ts": "ts" } }]);
+				.use(asRollupPlugin(), [{ sourcemap: true, loaders: { ".js": "js", ".ts": "ts" } }]);
 		}
 	});
 
