@@ -35,7 +35,7 @@ export interface PkgData {
 	root: string;
 }
 
-export type PkgCommand = "creation" | "rm" | "addDeps" | "test" | "build" | "publish" | "genDocs";
+export type PkgCommand = "creation" | "genDocs" | "glint" | "test" | "build" | "publish";
 
 export type PkgCmdHookLifecycle = "start" | "proc" | "complete" | "error" | "clean";
 
@@ -48,7 +48,7 @@ export interface SiuConfig {
 	 *
 	 * 	选项: "auto" | "priority" | custom stirng array
 	 *
-	 *  默认值: "auto"
+	 *  默认值: "priority"
 	 *
 	 *  提示:
 	 *    auto: 默认按照package的目录名称排序

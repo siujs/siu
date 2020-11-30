@@ -13,7 +13,7 @@ const buckets = {} as Record<string, PluginApi>;
 
 const pluginBuckets = [] as SiuPlugin[];
 
-const actions = ["creation", "rm", "addDeps", "test", "build", "publish", "genDocs"] as PkgCommand[];
+const actions = ["creation", "genDocs", "glint", "test", "build", "publish"] as PkgCommand[];
 const lifecycles = ["start", "proc", "complete", "error", "clean"] as PkgCmdHookLifecycle[];
 
 export function plugin(defaultOpts: Partial<Record<PkgCommand, Record<string, any>>> = {}) {
