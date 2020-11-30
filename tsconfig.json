@@ -4,7 +4,7 @@
 		  "rootDir": ".",
 			"baseUrl": ".",
       "paths": {
-					"@siujs/*": ["./packages/*/"]
+					"@siujs/*": ["packages/*/lib"]
 			}
 	},
   "include": [
