@@ -4,8 +4,8 @@ import glob from "glob";
 import path from "path";
 import ms from "pretty-ms";
 
+import { asRollupPlugin, Config, SiuRollupBuilder, stopService, TOutputFormatKey } from "@siujs/builder";
 import { HookHandlerApi, plugin } from "@siujs/core";
-import { asRollupPlugin, Config, SiuRollupBuilder, stopService, TOutputFormatKey } from "@siujs/rollup";
 
 const plug = plugin({
 	build: {

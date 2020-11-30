@@ -3,7 +3,6 @@ import fs from "fs-extra";
 import path from "path";
 import ms from "pretty-ms";
 
-import { HookHandlerApi } from "@siujs/core";
 import {
 	asRollupPlugin,
 	Config,
@@ -11,7 +10,8 @@ import {
 	SiuRollupBuilder,
 	stopService,
 	TOutputFormatKey
-} from "@siujs/rollup";
+} from "@siujs/builder";
+import { HookHandlerApi } from "@siujs/core";
 
 type TransformConfigHook = (config: Config, format: TOutputFormatKey) => void | Promise<void>;
 

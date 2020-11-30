@@ -1,5 +1,5 @@
 {
-  "name": "@siujs/rollup",
+  "name": "@siujs/builder",
   "version": "1.0.0",
   "description": "rollup of siujs",
   "keywords": [

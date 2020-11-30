@@ -30,7 +30,7 @@
   },
   "dependencies": {
     "@siujs/core": "^1.0.0",
-    "@siujs/rollup": "^1.0.0",
+    "@siujs/builder": "^1.0.0",
     "@siujs/utils": "^1.0.0",
     "chalk": "^4.1.0",
     "fs-extra": "^9.0.1",
