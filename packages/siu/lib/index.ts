@@ -7,6 +7,8 @@ import { applyPlugins, PkgCommand } from "@siujs/core";
 import { initApp } from "@siujs/init-app";
 import { resolvePkgDirName } from "@siujs/utils";
 
+import { handleDepsCmd } from "./deps";
+
 interface CommonOptions {
 	pkgs?: string;
 	[x: string]: any;
@@ -83,7 +85,15 @@ export async function runCmd<T extends CommonOptions>(cmd: PkgCommand | "init", 
 		return;
 	}
 
-	const { pkgs, ...rest } = options || {};
+	// Whether `siu.config.js` in process.cwd()
+
+	const { pkgs, ...rest } = options || ({} as Record<string, any>);
+
+	if (cmd === "deps") {
+		await handleDepsCmd(pkgs, rest.deps, rest.action);
+		return;
+	}
+
 	try {
 		await applyPlugins(cmd, pkgs, rest);
 	} catch (ex) {
