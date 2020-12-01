@@ -1,10 +1,10 @@
 {
-  "name": "@siujs/plugin-es-packing",
+  "name": "@siujs/plugin-es-import",
   "version": "1.0.0",
   "description": "Support tree-shaking es package, optimize package size",
   "keywords": [
     "es",
-    "packing",
+    "import",
     "siujs"
   ],
   "author": "buns <kuafujs@126.com>",
