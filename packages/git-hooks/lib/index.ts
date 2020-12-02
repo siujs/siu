@@ -1,7 +1,3 @@
-"use strict";
-
-module.exports = gitLint;
-
-function gitLint() {
-	// TODO
-}
+export * from "./types";
+export * from "./utils";
+export * from "./hooks";
