@@ -59,7 +59,7 @@ program
 		}
 
 		await runCmd("creation", {
-			pkgs: pkg,
+			pkgNames: pkg,
 			deps: cmd.deps
 		});
 	});
@@ -81,7 +81,7 @@ program
 		}
 
 		await runCmd("deps", {
-			pkgs: cmd.target,
+			pkgNames: cmd.target,
 			deps,
 			action: cmd.rm ? "rm" : "add"
 		});
@@ -98,7 +98,7 @@ program
 			return;
 		}
 
-		await runCmd("genDocs", { pkgs });
+		await runCmd("genDocs", { pkgNames: pkgs });
 	});
 
 program
@@ -112,7 +112,7 @@ program
 			return;
 		}
 
-		await runCmd("test", { pkgs });
+		await runCmd("test", { pkgNames: pkgs });
 	});
 
 program
@@ -126,7 +126,7 @@ program
 			return;
 		}
 
-		await runCmd("build", { pkgs });
+		await runCmd("build", { pkgNames: pkgs });
 	});
 
 program

@@ -25,15 +25,17 @@ export function validPkgName(name: string) {
 	if (!result.validForNewPackages) {
 		console.error(chalk.red(`Invalid name: "${name}"`));
 
-		result.errors &&
+		if ("errors" in result) {
 			result.errors.forEach(err => {
 				console.error(chalk.red.dim("Error: " + err));
 			});
+		}
 
-		result.warnings &&
+		if ("warnings" in result) {
 			result.warnings.forEach(warn => {
 				console.error(chalk.red.dim("Warning: " + warn));
 			});
+		}
 
 		process.exit(1);
 	}
@@ -86,15 +88,14 @@ export async function runCmd<T extends CommonOptions>(cmd: PluginCommand | "init
 
 	// Whether `siu.config.js` in process.cwd()
 
-	const { pkgs, ...rest } = options || ({} as Record<string, any>);
+	const { pkgNames, ...rest } = options || ({} as Record<string, any>);
 
 	if (cmd === "deps") {
-		await handleDepsCmd(pkgs, rest.deps, rest.action);
-		return;
+		return handleDepsCmd(pkgNames, rest.deps, rest.action);
 	}
 
 	try {
-		await applyPlugins(cmd, pkgs, rest);
+		await applyPlugins(cmd, options);
 	} catch (ex) {
 		console.error(ex);
 		process.exit(1);
