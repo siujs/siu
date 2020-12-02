@@ -10,8 +10,8 @@
   "license": "MIT",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
-  "types": "dist/rollup.d.ts",
-  "typings": "dist/rollup.d.ts",
+  "types": "dist/builder.d.ts",
+  "typings": "dist/builder.d.ts",
   "directories": {
     "lib": "lib",
     "test": "__tests__"

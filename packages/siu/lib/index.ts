@@ -3,9 +3,8 @@ import fs from "fs-extra";
 import path from "path";
 import validProjectName from "validate-npm-package-name";
 
-import { applyPlugins, PkgCommand } from "@siujs/core";
+import { applyPlugins, getPkgDirName, PluginCommand } from "@siujs/core";
 import { initApp } from "@siujs/init-app";
-import { resolvePkgDirName } from "@siujs/utils";
 
 import { handleDepsCmd } from "./deps";
 
@@ -47,7 +46,7 @@ export function validPkgName(name: string) {
  * @param name package name
  */
 export async function isPkgExists(name: string) {
-	const dirName = resolvePkgDirName(name);
+	const dirName = getPkgDirName(name);
 
 	const pkgs = await fs.readdir(path.resolve(process.cwd(), "packages"));
 
@@ -79,7 +78,7 @@ export async function findUnfoundPkgs(pkgs: string) {
  * @param cmd client command
  * @param options client command payload options
  */
-export async function runCmd<T extends CommonOptions>(cmd: PkgCommand | "init", options: T) {
+export async function runCmd<T extends CommonOptions>(cmd: PluginCommand | "init" | "deps", options: T) {
 	if (cmd === "init") {
 		await initApp(options as any);
 		return;

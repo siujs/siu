@@ -1,6 +1,7 @@
 import shell from "shelljs";
 
-import { isWindows, resolvePkgDirName } from "@siujs/utils";
+import { getPkgDirName } from "@siujs/core";
+import { isWindows } from "@siujs/utils";
 
 /**
  *
@@ -47,7 +48,7 @@ export function handleDepsCmd(pkg: string, deps: string, action: "add" | "rm" = 
 
 	shell.exec("yarn config set workspaces-experimental true");
 
-	const workspaceName = resolvePkgDirName(pkg);
+	const workspaceName = getPkgDirName(pkg);
 
 	if (depsMap.deps && depsMap.deps.length) {
 		shell.exec(`yarn workspace ${workspaceName} ${action} ${depsMap.deps.join(" ")}`);

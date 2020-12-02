@@ -11,22 +11,22 @@ import {
 	stopService,
 	TOutputFormatKey
 } from "@siujs/builder";
-import { HookHandlerApi } from "@siujs/core";
+import { HookHandlerContext, HookHandlerNext } from "@siujs/core";
 
 type TransformConfigHook = (config: Config, format: TOutputFormatKey) => void | Promise<void>;
 
-export async function onBuildStart({ ctx, next }: HookHandlerApi) {
+export async function onBuildStart(ctx: HookHandlerContext, next: HookHandlerNext) {
 	ctx.keys("startTime", Date.now());
 
-	await fs.remove(path.resolve(ctx.currentPkg().pkgData().path, "./dist"));
+	await fs.remove(path.resolve(ctx.pkg().path, "./dist"));
 
 	await next();
 }
 
-export async function onBuildProc({ ctx, opts, next }: HookHandlerApi) {
-	const customTransform = opts<TransformConfigHook>("transformConfig");
+export async function onBuildProc(ctx: HookHandlerContext, next: HookHandlerNext) {
+	const customTransform = ctx.opts<TransformConfigHook>("transformConfig");
 
-	const pkgData = ctx.currentPkg().pkgData();
+	const pkgData = ctx.pkg();
 
 	const builder = new SiuRollupBuilder(pkgData, {
 		async onConfigTransform(config: Config, format: TOutputFormatKey) {
@@ -63,21 +63,19 @@ export async function onBuildProc({ ctx, opts, next }: HookHandlerApi) {
 	await next();
 }
 
-export async function onBuildComplete({ ctx }: HookHandlerApi) {
+export async function onBuildComplete(ctx: HookHandlerContext) {
 	console.log(
 		chalk.green(
-			`\n✔ Builded ${chalk.bold(ctx.currentPkg().pkgData().name)} in ${chalk.bold(
-				ms(Date.now() - ctx.keys<number>("startTime"))
-			)}!`
+			`\n✔ Builded ${chalk.bold(ctx.pkg().name)} in ${chalk.bold(ms(Date.now() - ctx.keys<number>("startTime")))}!`
 		)
 	);
 }
 
-export async function onBuildError({ ctx }: HookHandlerApi) {
+export async function onBuildError(ctx: HookHandlerContext) {
 	console.log(chalk.redBright(ctx.ex()));
 }
 
-export async function onBuildClean({ ctx }: HookHandlerApi) {
+export async function onBuildClean(ctx: HookHandlerContext) {
 	/**
 	 * 关闭esbuild的servie
 	 *
@@ -85,7 +83,7 @@ export async function onBuildClean({ ctx }: HookHandlerApi) {
 	 */
 	stopService();
 
-	const pkgData = ctx.currentPkg().pkgData();
+	const pkgData = ctx.pkg();
 
 	await Promise.all([
 		fs.remove(path.resolve(pkgData.path, "./dts_dist")),

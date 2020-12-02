@@ -4,22 +4,19 @@ import path from "path";
 import ms from "pretty-ms";
 import shell from "shelljs";
 
-import { HookHandlerApi } from "@siujs/core";
-import { downloadGit, resolvePkgDirName, startSpinner } from "@siujs/utils";
+import { getPkgDirName, HookHandlerContext, HookHandlerNext } from "@siujs/core";
+import { downloadGit, startSpinner } from "@siujs/utils";
 
-export async function onCreationStart(api: HookHandlerApi) {
-	api.ctx.keys("startTime", Date.now());
+export async function onCreationStart(ctx: HookHandlerContext, next: HookHandlerNext) {
+	ctx.keys("startTime", Date.now());
 
-	api.ctx.keys(
-		"spinner",
-		startSpinner(chalk.greenBright(`Creating \`${chalk.bold(api.ctx.currentPkg().pkgData().name)}\` package... `))
-	);
+	ctx.keys("spinner", startSpinner(chalk.greenBright(`Creating \`${chalk.bold(ctx.pkg().name)}\` package... `)));
 
-	await api.next();
+	await next();
 }
 
-export async function onCreationProc(api: HookHandlerApi) {
-	const pkgData = api.ctx.currentPkg().pkgData();
+export async function onCreationProc(ctx: HookHandlerContext, next: HookHandlerNext) {
+	const pkgData = ctx.pkg();
 
 	await downloadGit("https://github.com/siujs/tpls", "jssdk.pkg", pkgData.path);
 
@@ -43,7 +40,7 @@ export async function onCreationProc(api: HookHandlerApi) {
 		});
 	});
 
-	const deps = api.opts<string>("deps");
+	const deps = ctx.opts<string>("deps");
 
 	if (deps) {
 		const depsArr = [] as { name: string; isDev: boolean }[];
@@ -54,7 +51,7 @@ export async function onCreationProc(api: HookHandlerApi) {
 
 		if (deps.length) {
 			const depMetas = await Promise.all(
-				depsArr.map(dep => fs.readJSON(path.resolve(pkgData.pkgsRoot, resolvePkgDirName(dep.name), "package.json")))
+				depsArr.map(dep => fs.readJSON(path.resolve(pkgData.pkgsRoot, getPkgDirName(dep.name), "package.json")))
 			);
 
 			const pkgMeta = await fs.readJSON(pkgData.metaPath);
@@ -65,7 +62,7 @@ export async function onCreationProc(api: HookHandlerApi) {
 				});
 
 				await Promise.all([
-					api.ctx.currentPkg().refreshPkgMeta(pkgMeta),
+					ctx.refreshPkgMeta(pkgMeta),
 					fs.writeJSON(pkgData.metaPath, pkgMeta, {
 						spaces: 2
 					})
@@ -74,25 +71,23 @@ export async function onCreationProc(api: HookHandlerApi) {
 		}
 	}
 
-	api.ctx.keys("spinner").stop(true);
+	ctx.keys("spinner").stop(true);
 
 	shell.exec("yarn");
 
-	await api.next();
+	await next();
 }
 
-export async function onCreationComplete({ ctx }: HookHandlerApi) {
+export async function onCreationComplete(ctx: HookHandlerContext) {
 	console.log(
 		chalk.green(
-			`\n✔ Created ${chalk.bold(ctx.currentPkg().pkgData().name)} in ${chalk.bold(
-				ms(Date.now() - ctx.keys<number>("startTime"))
-			)}!`
+			`\n✔ Created ${chalk.bold(ctx.pkg().name)} in ${chalk.bold(ms(Date.now() - ctx.keys<number>("startTime")))}!`
 		)
 	);
 }
 
-export async function onCreationError({ ctx }: HookHandlerApi) {
+export async function onCreationError(ctx: HookHandlerContext) {
 	ctx.keys("spinner").stop(true);
-	shell.rm("-rf", ctx.currentPkg().pkgData().path);
+	shell.rm("-rf", ctx.pkg().path);
 	console.log(chalk.redBright(ctx.ex()));
 }
