@@ -1,0 +1,33 @@
+{
+  "name": "@siujs/plugin-vui",
+  "version": "1.0.0",
+  "description": "vue3.x ui library offical plugin of siujs",
+  "keywords": [
+    "vue3",
+    "ui",
+    "siujs"
+  ],
+  "author": "buns <kuafujs@126.com>",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "directories": {
+    "lib": "lib",
+    "test": "__tests__"
+  },
+  "files": [
+    "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/siujs/siu.git"
+  },
+  "bugs": {
+    "url": "https://github.com/siujs/siu/issues"
+  },
+  "homepage": "https://github.com/siujs/siu#readme",
+  "dependencies": {
+    "@siujs/builder": "^1.0.0",
+    "@siujs/core": "^1.0.0"
+  }
+}
