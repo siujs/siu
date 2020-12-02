@@ -1,0 +1,36 @@
+{
+  "name": "@siujs/git-hooks",
+  "version": "1.0.0",
+  "description": "git hooks for siujs",
+  "keywords": [
+    "git",
+    "hooks",
+    "siujs"
+  ],
+  "author": "buns <kuafujs@126.com>",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/git-hooks.d.ts",
+  "typings": "dist/git-hooks.d.ts",
+  "directories": {
+    "lib": "lib",
+    "test": "__tests__"
+  },
+  "files": [
+    "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/siujs/siu.git"
+  },
+  "bugs": {
+    "url": "https://github.com/siujs/siu/issues"
+  },
+  "homepage": "https://github.com/siujs/siu#readme",
+  "dependencies": {
+    "@siujs/utils": "^1.0.0",
+    "chalk": "^4.1.0",
+    "shelljs": "^0.8.4"
+  }
+}
