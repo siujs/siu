@@ -1,0 +1,34 @@
+{
+  "name": "@siujs/plugin-glint",
+  "version": "1.0.0",
+  "description": "git lint of siujs",
+  "keywords": [
+    "git",
+    "lint",
+    "siujs"
+  ],
+  "author": "buns <kuafujs@126.com>",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "directories": {
+    "lib": "lib",
+    "test": "__tests__"
+  },
+  "files": [
+    "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/siujs/siu.git"
+  },
+  "bugs": {
+    "url": "https://github.com/siujs/siu/issues"
+  },
+  "homepage": "https://github.com/siujs/siu#readme",
+  "dependencies": {
+    "@siujs/core": "^1.0.0",
+    "@siujs/git-hooks": "^1.0.0",
+    "@siujs/utils": "^1.0.0"
+  }
+}

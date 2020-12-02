@@ -144,7 +144,7 @@ program
 		"Git lifecycle hook: pre-commit、prepare-commit-msg、commit-msg、post-commit、post-merge"
 	)
 	.action(async cmd => {
-		console.log(cmd.hook);
+		await runCmd("glint", { hook: cmd.hook });
 	});
 
 program.parse(process.argv);
