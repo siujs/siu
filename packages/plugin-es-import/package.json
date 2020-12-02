@@ -1,14 +1,11 @@
 {
-  "name": "@siujs/plugin-jssdk",
+  "name": "@siujs/plugin-es-import",
   "version": "1.0.0",
-  "description": "siujs plugin for the project type is `js-sdk`",
+  "description": "Support tree-shaking es package, optimize package size",
   "keywords": [
-    "js",
-    "sdk",
-    "jssdk",
-    "siu",
-    "siujs",
-    "plugin"
+    "es",
+    "import",
+    "siujs"
   ],
   "author": "buns <kuafujs@126.com>",
   "homepage": "https://github.com/siujs/siu",
@@ -31,15 +28,12 @@
   "dependencies": {
     "@siujs/core": "^1.0.0",
     "@siujs/builder": "^1.0.0",
-    "@siujs/utils": "^1.0.0",
     "chalk": "^4.1.0",
     "fs-extra": "^9.0.1",
-    "pretty-ms": "^7.0.1",
-    "rollup-plugin-babel": "^4.4.0",
-    "shelljs": "^0.8.4"
+    "glob": "^7.1.6",
+    "pretty-ms": "^7.0.1"
   },
   "devDependencies": {
-    "@types/fs-extra": "^9.0.4",
-    "@types/shelljs": "^0.8.8"
+    "@types/fs-extra": "^9.0.4"
   }
 }

@@ -1,16 +1,18 @@
 {
-  "name": "@siujs/plugin-es-packing",
+  "name": "@siujs/git-hooks",
   "version": "1.0.0",
-  "description": "Support tree-shaking es package, optimize package size",
+  "description": "git hooks for siujs",
   "keywords": [
-    "es",
-    "packing",
+    "git",
+    "hooks",
     "siujs"
   ],
   "author": "buns <kuafujs@126.com>",
-  "homepage": "https://github.com/siujs/siu",
   "license": "MIT",
   "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/git-hooks.d.ts",
+  "typings": "dist/git-hooks.d.ts",
   "directories": {
     "lib": "lib",
     "test": "__tests__"
@@ -25,15 +27,10 @@
   "bugs": {
     "url": "https://github.com/siujs/siu/issues"
   },
+  "homepage": "https://github.com/siujs/siu#readme",
   "dependencies": {
-    "@siujs/core": "^1.0.0",
-    "@siujs/rollup": "^1.0.0",
+    "@siujs/utils": "^1.0.0",
     "chalk": "^4.1.0",
-    "fs-extra": "^9.0.1",
-    "glob": "^7.1.6",
-    "pretty-ms": "^7.0.1"
-  },
-  "devDependencies": {
-    "@types/fs-extra": "^9.0.4"
+    "shelljs": "^0.8.4"
   }
 }

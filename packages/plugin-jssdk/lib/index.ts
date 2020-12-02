@@ -6,12 +6,12 @@ import { onCreationComplete, onCreationError, onCreationProc, onCreationStart } 
 const plug = plugin({});
 
 plug.creation.start(onCreationStart);
-plug.creation.proc(onCreationProc);
+plug.creation.process(onCreationProc);
 plug.creation.complete(onCreationComplete);
 plug.creation.error(onCreationError);
 
 plug.build.start(onBuildStart);
-plug.build.proc(onBuildProc);
+plug.build.process(onBuildProc);
 plug.build.complete(onBuildComplete);
 plug.build.error(onBuildError);
 plug.build.clean(onBuildClean);

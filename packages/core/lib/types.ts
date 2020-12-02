@@ -1,5 +1,3 @@
-import { PlugContext } from "./plugin/context/plug";
-
 export interface PkgData {
 	/**
 	 * full name of package, equlas `name` in package.json
@@ -35,11 +33,17 @@ export interface PkgData {
 	root: string;
 }
 
-export type PkgCommand = "creation" | "rm" | "addDeps" | "test" | "build" | "publish" | "genDocs";
+export type PluginCommand = "creation" | "genDocs" | "test" | "build" | "publish" | "glint";
 
-export type PkgCmdHookLifecycle = "start" | "proc" | "complete" | "error" | "clean";
+export type PluginCommandLifecycle = "start" | "process" | "complete" | "error" | "clean";
 
-export type SiuConfigExcludePkgs = string[] | Record<PkgCommand, string[]>;
+export type GLintClientHooks = "pre-commit" | "prepare-commit-msg" | "commit-msg" | "post-commit" | "post-merge";
+
+export type GLintHookHandler = <O extends Record<string, any>, R>(hook: GLintClientHooks, options: O) => R | Promise<R>;
+
+export type PluginApi = Record<PluginCommand, Record<PluginCommandLifecycle, (fn: HookHandler) => void>>;
+
+export type SiuConfigExcludePkgs = string[] | Record<PluginCommand, string[]>;
 
 export interface SiuConfig {
 	/**
@@ -48,7 +52,7 @@ export interface SiuConfig {
 	 *
 	 * 	选项: "auto" | "priority" | custom stirng array
 	 *
-	 *  默认值: "auto"
+	 *  默认值: "priority"
 	 *
 	 *  提示:
 	 *    auto: 默认按照package的目录名称排序
@@ -72,7 +76,7 @@ export interface SiuConfig {
 				string,
 				{
 					excludePkgs?: SiuConfigExcludePkgs;
-					custom?: Partial<Record<PkgCommand, Record<string, any>>>;
+					custom?: Partial<Record<PluginCommand, Record<string, any>>>;
 				}
 		  ]
 	)[];
@@ -81,12 +85,45 @@ export interface SiuConfig {
 export type HookHandlerOpts = <T extends any>(key: string) => T;
 export type HookHandlerNext = (err?: Error) => Promise<void>;
 
-export interface HookHandlerApi {
-	ctx: PlugContext;
-	opts: HookHandlerOpts;
-	next: HookHandlerNext;
+export interface HookHandlerContext {
+	/**
+	 *
+	 * 当前插件在当前生命周期钩子下的配置获取
+	 *
+	 * @param key 配置key
+	 */
+	opts<T>(key: string): T;
+	/**
+	 *
+	 * 当前插件全局临时缓存设置/获取
+	 *
+	 * @param key 目标键
+	 * @param value 如果设置则表示存入临时值,反之获取临时值
+	 */
+	keys<T>(key: string, value?: T): T extends unknown ? any : T;
+	/**
+	 *
+	 * 当前插件在当前生命周期/当前pkg下的缓存设置/获取
+	 *
+	 * @param key 目标键
+	 * @param value 如果设置则表示存入临时值,反之获取临时值
+	 */
+	scopedKeys<T>(key: string, value?: T): T extends unknown ? any : T;
+	/**
+	 *
+	 * 当前插件在当前生命周期/当前pkg下的异常设置/获取
+	 *
+	 * @param value 如果设置则表示存入临时值,反之获取临时值
+	 */
+	ex(value?: Error | string): string | Error | void;
+	/**
+	 * 当前插件运行时对应的正在处理的package对象获取
+	 */
+	pkg(): PkgData | undefined;
+	/**
+	 * 刷新当前pkg的meta信息
+	 */
+	refreshPkgMeta(meta: Record<string, any>): void;
 }
 
-export type HookHandler = (api: HookHandlerApi) => Promise<void> | void;
-
-export { PlugContext };
+export type HookHandler = (ctx: HookHandlerContext, next: HookHandlerNext) => Promise<void> | void;

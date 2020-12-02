@@ -35,3 +35,15 @@ export function sortObject(
 
 	return res;
 }
+
+export function deepFreezeObject(o: any) {
+	let prop, propKey;
+	Object.freeze(o);
+	for (propKey in o) {
+		prop = o[propKey];
+		if (!o.hasOwnProperty(propKey) || !(typeof prop === "object") || Object.isFrozen(prop)) {
+			continue;
+		}
+		deepFreezeObject(prop);
+	}
+}

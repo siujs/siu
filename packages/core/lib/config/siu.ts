@@ -3,7 +3,7 @@ import path from "path";
 
 import { resolvePluginId } from "@siujs/utils";
 
-import { PkgCommand, SiuConfig, SiuConfigExcludePkgs } from "../types";
+import { PluginCommand, SiuConfig, SiuConfigExcludePkgs } from "../types";
 
 export function resolveSiuConfig(cwd: string) {
 	const configFile = path.resolve(cwd, "siu.config.js");
@@ -46,12 +46,12 @@ export class SiuConfiger {
 		this._config = resolveSiuConfig(cwd);
 	}
 
-	isPkgDisable(pkgDirName: string, cmd: PkgCommand, plugId: string) {
+	isPkgDisable(pkgDirName: string, cmd: PluginCommand, plugId: string) {
 		const { excludePkgs, plugins } = this._config;
 
 		function validFromExcludePkgs(excludePkgs: SiuConfigExcludePkgs) {
 			if (Array.isArray(excludePkgs) && excludePkgs.includes(pkgDirName)) return true;
-			const opts = (excludePkgs as Record<PkgCommand, string[]>)[cmd];
+			const opts = (excludePkgs as Record<PluginCommand, string[]>)[cmd];
 			if (opts && opts.includes(pkgDirName)) return true;
 		}
 
@@ -92,6 +92,8 @@ export class SiuConfiger {
 		} catch (ex) {
 			throw new Error(`[@siujs/core] Error: can't resolve plugins ` + ex);
 		}
+
+		return this;
 	}
 
 	get(key: keyof SiuConfig) {

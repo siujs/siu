@@ -2,6 +2,9 @@ import fs from "fs-extra";
 import path from "path";
 import esbuild from "./scripts/rollup-plugin-esbuild.mjs";
 import externals from "rollup-plugin-node-externals";
+import cjs from "@rollup/plugin-commonjs";
+import nodeResolve from "@rollup/plugin-node-resolve";
+import json from "@rollup/plugin-json";
 
 // import dts from "rollup-plugin-dts";
 
@@ -27,8 +30,13 @@ function getPkgDeps(pkgDir) {
 	};
 }
 
+const utilsDeps = getPkgDeps("utils");
+
 const configs = pkgDirList.map(pkgDir => {
-	const deps = getPkgDeps(pkgDir);
+	const deps = {
+		...getPkgDeps(pkgDir),
+		...utilsDeps
+	};
 
 	return {
 		input: resolvePkgInput(pkgDir),
@@ -44,8 +52,26 @@ const configs = pkgDirList.map(pkgDir => {
 				sourcemap: true
 			}
 		],
-		plugins: [externals(), esbuild()],
-		external: Object.keys(deps)
+		plugins: [
+			json({
+				namedExports: false
+			}),
+			nodeResolve({
+				preferBuiltins: true
+			}),
+			cjs(),
+			externals(),
+			esbuild()
+		],
+		external: Object.keys(deps),
+		onwarn: (msg, warn) => {
+			if (!/Circular/.test(msg)) {
+				warn(msg);
+			}
+		},
+		treeshake: {
+			moduleSideEffects: false
+		}
 	};
 });
 

@@ -1,11 +1,11 @@
-# `@siujs/rollup`
+# `@siujs/git-lint`
 
 > TODO: description
 
 ## Usage
 
 ```
-const rollup = require('@siujs/rollup');
+const gitLint = require('@siujs/git-lint');
 
 // TODO: DEMONSTRATE API
 ```

@@ -3,6 +3,8 @@ import fs from "fs-extra";
 import path from "path";
 import shell from "shelljs";
 
+import { PkgData } from "./pkgData";
+
 /**
  *
  * Use `api-extractor` to generate types definition
@@ -13,7 +15,7 @@ import shell from "shelljs";
  * @property {string} pkgData.name current package name
  * @property {Record<string,any>} [pkgData.meta] current package.json data of package
  */
-export async function generateDTS(pkgData: { path: string; name: string; meta?: Record<string, any> }) {
+export async function generateDTS(pkgData: PkgData) {
 	// eslint-disable-next-line @typescript-eslint/no-var-requires
 	const { Extractor, ExtractorConfig } = require("@microsoft/api-extractor");
 
@@ -61,7 +63,7 @@ export async function generateDTS(pkgData: { path: string; name: string; meta?: 
  * @property {string} pkgData.name current package name
  * @property {Record<string,any>} [pkgData.meta] current package.json data of package
  */
-export async function generateDTSWithTSC(pkgData: { path: string; name: string; meta?: Record<string, any> }) {
+export async function generateDTSWithTSC(pkgData: PkgData) {
 	const pkgRoot = path.resolve(pkgData.path, "../../");
 
 	const tscCmdPath = path.resolve(pkgRoot, "node_modules/.bin/tsc");
@@ -69,7 +71,7 @@ export async function generateDTSWithTSC(pkgData: { path: string; name: string; 
 	const exists = await fs.pathExists(tscCmdPath);
 
 	if (!exists) {
-		throw new Error(`[@siujs/rollup] Error: Cant't find typescript in \`${pkgRoot}\``);
+		throw new Error(`[@siujs/builder] Error: Cant't find typescript in \`${pkgRoot}\``);
 	}
 
 	shell.exec(`${tscCmdPath} --emitDeclarationOnly`, {

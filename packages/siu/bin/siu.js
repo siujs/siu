@@ -65,10 +65,27 @@ program
 	});
 
 program
-	.command("add [deps]")
+	.command("deps [deps]")
 	.option("-t, --target <target>", "target package name,e.g. foo、@foo/bar")
-	.description("Add deps to target monorepo's package")
-	.action(async (deps, cmd) => {});
+	.option("-r, --rm", "is remove deps from package")
+	.description("Add deps to target monorepo's package, e.g. add foo,foo@1.2.2,foo:D,foo@1.2.2:D ")
+	.action(async (deps, cmd) => {
+		if (cmd.target) {
+			validPkgName(cmd.target);
+		}
+		const exists = await isPkgExists(cmd.target);
+
+		if (!exists) {
+			console.log(chalk.red.bold(`[siu] ERROR: \`${cmd.target}\` does not exists! `));
+			return;
+		}
+
+		await runCmd("deps", {
+			pkgs: cmd.target,
+			deps,
+			action: cmd.rm ? "rm" : "add"
+		});
+	});
 
 program
 	.command("doc [pkgs]")
@@ -126,7 +143,9 @@ program
 		"-h, --hook <hook>",
 		"Git lifecycle hook: pre-commit、prepare-commit-msg、commit-msg、post-commit、post-merge"
 	)
-	.action(async () => {});
+	.action(async cmd => {
+		console.log(cmd.hook);
+	});
 
 program.parse(process.argv);
 

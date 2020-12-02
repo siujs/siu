@@ -4,8 +4,8 @@ import glob from "glob";
 import path from "path";
 import ms from "pretty-ms";
 
-import { HookHandlerApi, plugin } from "@siujs/core";
-import { asRollupPlugin, Config, SiuRollupBuilder, stopService, TOutputFormatKey } from "@siujs/rollup";
+import { asRollupPlugin, Config, SiuRollupBuilder, stopService, TOutputFormatKey } from "@siujs/builder";
+import { HookHandlerContext, HookHandlerNext, plugin } from "@siujs/core";
 
 const plug = plugin({
 	build: {
@@ -14,29 +14,29 @@ const plug = plugin({
 	}
 });
 
-plug.build.start(async ({ ctx, opts, next }: HookHandlerApi) => {
-	const sourceDir = opts<string>("sourceDir");
+plug.build.start(async (ctx: HookHandlerContext, next: HookHandlerNext) => {
+	const sourceDir = ctx.opts<string>("sourceDir");
 
 	if (!sourceDir) {
 		await next(new Error(`ERROR: 'sourceDir' options can't be emtpy!`));
 		return;
 	}
 
-	const destDir = opts<string>("destDir") || "es";
+	const destDir = ctx.opts<string>("destDir") || "es";
 
 	ctx.keys("startTime", Date.now());
 
-	await fs.remove(path.resolve(ctx.currentPkg().pkgData().path, destDir));
+	await fs.remove(path.resolve(ctx.pkg().path, destDir));
 
 	await next();
 });
 
-plug.build.proc(async ({ ctx, opts, next }: HookHandlerApi) => {
-	const pkgData = ctx.currentPkg().pkgData();
+plug.build.process(async (ctx: HookHandlerContext, next: HookHandlerNext) => {
+	const pkgData = ctx.pkg();
 
-	const sourceESDirPath = path.resolve(pkgData.path, opts<string>("sourceDir"));
+	const sourceESDirPath = path.resolve(pkgData.path, ctx.opts<string>("sourceDir"));
 
-	const destESDir = path.resolve(pkgData.path, opts<string>("destDir") || "es");
+	const destESDir = path.resolve(pkgData.path, ctx.opts<string>("destDir") || "es");
 
 	const bablePluginImportBuilder = new SiuRollupBuilder(pkgData, {
 		onEachBuildStart(config: Config) {
@@ -81,17 +81,15 @@ plug.build.proc(async ({ ctx, opts, next }: HookHandlerApi) => {
 	await next();
 });
 
-plug.build.complete(({ ctx }: HookHandlerApi) => {
+plug.build.complete((ctx: HookHandlerContext) => {
 	console.log(
 		chalk.green(
-			`\n✔ Builded ${chalk.bold(ctx.currentPkg().pkgData().name)} in ${chalk.bold(
-				ms(Date.now() - ctx.keys<number>("startTime"))
-			)}!`
+			`\n✔ Builded ${chalk.bold(ctx.pkg().name)} in ${chalk.bold(ms(Date.now() - ctx.keys<number>("startTime")))}!`
 		)
 	);
 });
 
-plug.build.error(({ ctx }: HookHandlerApi) => {
+plug.build.error((ctx: HookHandlerContext) => {
 	console.log(chalk.redBright(ctx.ex()));
 });
 
