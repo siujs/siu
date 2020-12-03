@@ -1,4 +1,4 @@
-import { camelize, decodeCamelizeStr, isLinux, isMac, isWindows, sortObject } from "../lib";
+import { camelize, decodeCamelizeStr, deepFreezeObject, isLinux, isMac, isWindows, sortObject } from "../lib";
 import { isOfficalPlugin, isSiuPlugin, resolvePluginId } from "../lib/plugin-id-resolve";
 
 test("str:camelize", () => {
@@ -82,47 +82,58 @@ test("sort-object:set dontSortByUnicode", () => {
 	expect(keys2[4]).toBe("e");
 });
 
+test("deepFreezeObject", () => {
+	const kv = {
+		creation: {
+			start: 1
+		}
+	};
+
+	deepFreezeObject(kv);
+
+	try {
+		kv.creation.start = 2;
+	} catch {}
+	expect(kv.creation.start).toBe(1);
+
+	try {
+		delete kv.creation.start;
+	} catch {}
+	expect(kv.creation).toHaveProperty("start");
+});
+
 test("isSiuPlugin", () => {
-	expect(isSiuPlugin("@siu/cli-plugin-foo")).toBe(true);
-	expect(isSiuPlugin("siu-cli-plugin-foo")).toBe(true);
-	expect(isSiuPlugin("@buns/siu-cli-plugin-foo")).toBe(true);
-	expect(isSiuPlugin("@buns.li/siu-cli-plugin-foo")).toBe(true);
+	expect(isSiuPlugin("@siujs/plugin-foo")).toBe(true);
+	expect(isSiuPlugin("siujs-plugin-foo")).toBe(true);
+	expect(isSiuPlugin("@scope/siujs-plugin-foo")).toBe(true);
 
 	expect(isSiuPlugin("foo")).toBe(false);
-	expect(isSiuPlugin("@buns/foo")).toBe(false);
-	expect(isSiuPlugin("@buns.li/foo")).toBe(false);
-	expect(isSiuPlugin("@buns/plugin-foo")).toBe(false);
+	expect(isSiuPlugin("@scope/foo")).toBe(false);
+	expect(isSiuPlugin("@scope/plugin-foo")).toBe(false);
 });
 
 test("isOfficalPlugin", () => {
-	expect(isOfficalPlugin("@siu/cli-plugin-foo")).toBe(true);
+	expect(isOfficalPlugin("@siujs/plugin-foo")).toBe(true);
 
-	expect(isOfficalPlugin("@siu/foo")).toBe(false);
-	expect(isOfficalPlugin("siu-plugin-foo")).toBe(false);
-	expect(isOfficalPlugin("@buns/plugin-foo")).toBe(false);
-	expect(isOfficalPlugin("@buns/siu-plugin-foo")).toBe(false);
-	expect(isOfficalPlugin("@buns.li/siu-plugin-foo")).toBe(false);
+	expect(isOfficalPlugin("@siujs/foo")).toBe(false);
+	expect(isOfficalPlugin("siujs-plugin-foo")).toBe(false);
+	expect(isOfficalPlugin("@scope/plugin-foo")).toBe(false);
+	expect(isOfficalPlugin("@scope/siujs-plugin-foo")).toBe(false);
+	expect(isOfficalPlugin("@scope.li/siujs-plugin-foo")).toBe(false);
 });
 
 test("resolvePluginId: full id", () => {
-	expect(resolvePluginId("@siu/cli-plugin-vui")).toBe("@siu/cli-plugin-vui");
-	expect(resolvePluginId("siu-cli-plugin-vui")).toBe("siu-cli-plugin-vui");
-	expect(resolvePluginId("@buns/siu-cli-plugin-vui")).toBe("@buns/siu-cli-plugin-vui");
-});
-
-test("resolvePluginId: official short id", () => {
-	expect(resolvePluginId("lib")).toBe("@siu/cli-plugin-lib");
-	expect(resolvePluginId("vui")).toBe("@siu/cli-plugin-vui");
-	expect(resolvePluginId("vui2")).toBe("@siu/cli-plugin-vui2");
-	expect(resolvePluginId("vmfe")).toBe("@siu/cli-plugin-vmfe");
+	expect(resolvePluginId("@siujs/plugin-foo")).toBe("@siujs/plugin-foo");
+	expect(resolvePluginId("siujs-plugin-foo")).toBe("siujs-plugin-foo");
+	expect(resolvePluginId("@scope/siujs-plugin-foo")).toBe("@scope/siujs-plugin-foo");
 });
 
 test("resolvePluginId: scoped short id", () => {
-	expect(resolvePluginId("@siu/vui")).toBe("@siu/cli-plugin-vui");
-	expect(resolvePluginId("@siu/lib")).toBe("@siu/cli-plugin-lib");
+	expect(resolvePluginId("@siujs/foo")).toBe("@siujs/plugin-foo");
+	expect(resolvePluginId("@siujs/bar")).toBe("@siujs/plugin-bar");
 });
 
 test("resolvePluginId: short id", () => {
-	expect(resolvePluginId("vue")).toBe("siu-cli-plugin-vue");
-	expect(resolvePluginId("node")).toBe("siu-cli-plugin-node");
+	expect(resolvePluginId("foo")).toBe("siujs-plugin-foo");
+	expect(resolvePluginId("bar")).toBe("siujs-plugin-bar");
 });
