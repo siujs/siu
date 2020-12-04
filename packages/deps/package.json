@@ -1,0 +1,38 @@
+{
+  "name": "@siujs/deps",
+  "version": "1.0.0",
+  "description": "deps handle of siujs",
+  "keywords": [
+    "deps",
+    "siujs"
+  ],
+  "author": "buns <kuafujs@126.com>",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/deps.d.ts",
+  "typings": "dist/deps.d.ts",
+  "directories": {
+    "lib": "lib",
+    "test": "__tests__"
+  },
+  "files": [
+    "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/siujs/siu.git"
+  },
+  "bugs": {
+    "url": "https://github.com/siujs/siu/issues"
+  },
+  "homepage": "https://github.com/siujs/siu#readme",
+  "dependencies": {
+    "@siujs/utils": "^1.0.0",
+    "fs-extra": "^9.0.1",
+    "shelljs": "^0.8.4"
+  },
+  "devDependencies": {
+    "@types/fs-extra": "^9.0.4"
+  }
+}
