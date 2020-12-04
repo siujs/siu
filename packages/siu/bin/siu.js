@@ -72,12 +72,13 @@ program
 	.action(async (deps, cmd) => {
 		if (cmd.target) {
 			validPkgName(cmd.target);
-		}
-		const exists = await isPkgExists(cmd.target);
 
-		if (!exists) {
-			console.log(chalk.red.bold(`[siu] ERROR: \`${cmd.target}\` does not exists! `));
-			return;
+			const exists = await isPkgExists(cmd.target);
+
+			if (!exists) {
+				console.log(chalk.red.bold(`[siu] ERROR: \`${cmd.target}\` does not exists! `));
+				return;
+			}
 		}
 
 		await runCmd("deps", {
