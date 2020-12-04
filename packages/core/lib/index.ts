@@ -18,6 +18,17 @@ export function plugin(
 
 /**
  *
+ * has command hooks in current plugin
+ *
+ * @param cmd target command
+ */
+export function hasCommandHooks(cmd: PluginCommand) {
+	const plugs = getPlugins();
+	return plugs.reduce((prev, cur) => prev && cur.hasCommandHooks(cmd), true);
+}
+
+/**
+ *
  * 应用插件
  *
  * @param cmd 当前执行的命令

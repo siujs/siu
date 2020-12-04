@@ -125,7 +125,7 @@ export class SiuPlugin {
 	 * @param hookKey target hook key
 	 */
 	private hasHook(hookKey: string) {
-		return this.hooks[hookKey] && this.hooks[hookKey].length;
+		return this.hooks[hookKey] && !!this.hooks[hookKey].length;
 	}
 
 	private hasTargetHooks(cmd: PluginCommand) {
@@ -226,6 +226,16 @@ export class SiuPlugin {
 		this.cleanKeys();
 
 		await this.callHook(getHookId(this.cmd, "clean"));
+	}
+
+	/**
+	 *
+	 * has command hooks in current plugin
+	 *
+	 * @param cmd target command
+	 */
+	hasCommandHooks(cmd: PluginCommand) {
+		return lifecycles.reduce((prev, cur) => prev && this.hasHook(getHookId(cmd, cur)), true);
 	}
 
 	async process(cmd: PluginCommand, cmdOpts: Record<string, any>, pkgName?: string) {
