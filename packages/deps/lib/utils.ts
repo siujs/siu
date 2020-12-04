@@ -97,5 +97,5 @@ export async function addDeps(deps: { name: string; version: string }[], cwd: st
 		}
 	}
 
-	shell.exec(`yarn -W${isDev ? "D" : ""} ${deps.map(dep => `${dep.name}@${dep.version}`).join(" ")}`, { cwd });
+	shell.exec(`yarn -W${isDev ? "D" : ""} add ${deps.map(dep => `${dep.name}@${dep.version}`).join(" ")}`, { cwd });
 }
