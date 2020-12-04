@@ -19,7 +19,7 @@ test("getPackageDirs", async done => {
 	const dirs = await getPackageDirs(cwd);
 
 	expect(JSON.stringify(dirs)).toBe(
-		JSON.stringify(["builder", "core", "git-hooks", "init-app", "publisher", "siu", "utils"])
+		JSON.stringify(["builder", "core", "deps", "git-hooks", "init-app", "release", "siu", "utils"])
 	);
 
 	done();
@@ -30,7 +30,7 @@ test("getPackagePaths", async done => {
 
 	expect(JSON.stringify(dirs)).toBe(
 		JSON.stringify(
-			["builder", "core", "git-hooks", "init-app", "publisher", "siu", "utils"].map(it =>
+			["builder", "core", "deps", "git-hooks", "init-app", "release", "siu", "utils"].map(it =>
 				path.resolve(cwd, "packages", it)
 			)
 		)
@@ -52,9 +52,10 @@ test("getMetasOfPackages", async done => {
 
 	expect(metas).toHaveProperty("utils");
 	expect(metas).toHaveProperty("core");
+	expect(metas).toHaveProperty("deps");
 	expect(metas).toHaveProperty("git-hooks");
 	expect(metas).toHaveProperty("init-app");
-	expect(metas).toHaveProperty("publisher");
+	expect(metas).toHaveProperty("release");
 	expect(metas).toHaveProperty("siu");
 	expect(metas).toHaveProperty("builder");
 
@@ -88,7 +89,7 @@ test("getSortedPkgByPriority", async done => {
 	const sortedPkgs = await getSortedPkgByPriority(cwd);
 
 	expect(JSON.stringify(sortedPkgs)).toBe(
-		JSON.stringify(["utils", "core", "git-hooks", "init-app", "publisher", "siu", "builder"])
+		JSON.stringify(["utils", "core", "deps", "git-hooks", "init-app", "release", "siu", "builder"])
 	);
 
 	done();
