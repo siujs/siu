@@ -32,7 +32,7 @@ export function hasCommandHooks(cmd: PluginCommand) {
  * adjust current workspace directory
  *
  */
-async function adjustCWD() {
+export async function adjustCWD() {
 	const siuConfigCWD = await findUpSiuConfigCwd();
 
 	if (!siuConfigCWD) {
