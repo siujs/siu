@@ -24,7 +24,8 @@ export function plugin(
  */
 export function hasCommandHooks(cmd: PluginCommand) {
 	const plugs = getPlugins();
-	return plugs.reduce((prev, cur) => prev && cur.hasCommandHooks(cmd), true);
+
+	return plugs.reduce((prev, cur) => prev || cur.hasCommandHooks(cmd), false);
 }
 
 /**
