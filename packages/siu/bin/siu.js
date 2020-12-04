@@ -65,7 +65,7 @@ program
 	});
 
 program
-	.command("deps [deps]")
+	.command("deps <deps>")
 	.option("-t, --target <target>", "target package name,e.g. foo、@foo/bar")
 	.option("-r, --rm", "is remove deps from package")
 	.description("Add deps to target monorepo's package, e.g. add foo,foo@1.2.2,foo:D,foo@1.2.2:D ")
@@ -80,12 +80,13 @@ program
 				return;
 			}
 		}
-
-		await runCmd("deps", {
-			pkgNames: cmd.target,
-			deps,
-			action: cmd.rm ? "rm" : "add"
-		});
+		if (deps) {
+			await runCmd("deps", {
+				pkgNames: cmd.target,
+				deps,
+				action: cmd.rm ? "rm" : "add"
+			});
+		}
 	});
 
 program
