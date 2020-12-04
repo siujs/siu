@@ -3,10 +3,10 @@ import fs from "fs-extra";
 import path from "path";
 import validProjectName from "validate-npm-package-name";
 
-import { applyPlugins, getPkgDirName, PluginCommand } from "@siujs/core";
+import { applyPlugins, applyPluginsNoPkg, getPkgDirName, hasCommandHooks, PluginCommand } from "@siujs/core";
+import { changeDeps } from "@siujs/deps";
+import { useDefaultGitHook } from "@siujs/git-hooks";
 import { initApp } from "@siujs/init-app";
-
-import { handleDepsCmd } from "./deps";
 
 interface CommonOptions {
 	pkgs?: string;
@@ -80,22 +80,38 @@ export async function findUnfoundPkgs(pkgs: string) {
  * @param cmd client command
  * @param options client command payload options
  */
-export async function runCmd<T extends CommonOptions>(cmd: PluginCommand | "init" | "deps", options: T) {
+export async function runCmd<T extends CommonOptions>(cmd: PluginCommand | "init", options: T) {
 	if (cmd === "init") {
 		await initApp(options as any);
 		return;
 	}
 
-	// Whether `siu.config.js` in process.cwd()
-
 	const { pkgNames, ...rest } = options || ({} as Record<string, any>);
 
-	if (cmd === "deps") {
-		return handleDepsCmd(pkgNames, rest.deps, rest.action);
-	}
-
 	try {
-		await applyPlugins(cmd, options);
+		if (!hasCommandHooks(cmd)) {
+			if (cmd === "deps") {
+				// invoke official processing for deps handle
+				await changeDeps(pkgNames, rest.deps, rest.action);
+				return;
+			}
+
+			if (cmd === "glint") {
+				// invoke official processing for git hooks
+				await useDefaultGitHook(options.hook, process.cwd());
+				return;
+			}
+
+			if (cmd === "publish") {
+				// invoke official processing for publisher
+				return;
+			}
+
+			console.log(chalk.yellowBright(`[siu] Warning: Can't find any plugins to handle '${cmd}'`));
+			return;
+		}
+
+		cmd === "glint" || cmd === "deps" ? await applyPluginsNoPkg(cmd, options) : await applyPlugins(cmd, options);
 	} catch (ex) {
 		console.error(ex);
 		process.exit(1);
