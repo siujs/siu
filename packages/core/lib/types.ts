@@ -100,30 +100,55 @@ export interface HookHandlerContext {
 	 * @param key 目标键
 	 * @param value 如果设置则表示存入临时值,反之获取临时值
 	 */
-	keys<T>(key: string, value?: T): T extends unknown ? any : T;
+	keys(key: string, value: any): void;
 	/**
 	 *
-	 * 当前插件在当前生命周期/当前pkg下的缓存设置/获取
+	 * 当前插件全局临时缓存获取
+	 *
+	 * @param key 目标键
+	 */
+	keys<T>(key: string): T;
+	/**
+	 *
+	 * 当前插件在当前生命周期/当前pkg下的缓存设置
 	 *
 	 * @param key 目标键
 	 * @param value 如果设置则表示存入临时值,反之获取临时值
 	 */
-	scopedKeys<T>(key: string, value?: T): T extends unknown ? any : T;
+	scopedKeys(key: string, value: any): void;
 	/**
 	 *
-	 * 当前插件在当前生命周期/当前pkg下的异常设置/获取
+	 * 当前插件在当前生命周期/当前pkg下的缓存获取
 	 *
-	 * @param value 如果设置则表示存入临时值,反之获取临时值
+	 * @param key 目标键
 	 */
-	ex(value?: Error | string): string | Error | void;
+	scopedKeys<T>(key: string): T;
 	/**
+	 *
+	 * 当前插件在当前生命周期/当前pkg下的异常设置
+	 *
+	 * @param value 表示存入临时值
+	 */
+	ex(value: Error | string): void;
+	/**
+	 *
+	 * 当前插件在当前生命周期/当前pkg下的异常获取
+	 *
+	 */
+	ex(): string | Error;
+	/**
+	 *
 	 * 当前插件运行时对应的正在处理的package对象获取
+	 *
 	 */
 	pkg(): PkgData | undefined;
 	/**
+	 *
 	 * 刷新当前pkg的meta信息
+	 *
+	 * @param meta 新的package.json的值
 	 */
-	refreshPkgMeta(meta: Record<string, any>): void;
+	pkg(meta: Record<string, any>): void;
 }
 
 export type HookHandler = (ctx: HookHandlerContext, next: HookHandlerNext) => Promise<void> | void;
