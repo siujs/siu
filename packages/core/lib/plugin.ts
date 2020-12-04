@@ -48,8 +48,7 @@ export class SiuPlugin {
 			keys: this.keys.bind(this),
 			scopedKeys: this.scopedKeys.bind(this),
 			ex: this.ex.bind(this),
-			pkg: this.pkg.bind(this),
-			refreshPkgMeta: this.refreshPkgMeta.bind(this)
+			pkg: this.pkg.bind(this)
 		};
 	}
 
@@ -167,21 +166,22 @@ export class SiuPlugin {
 		return this.scopedKeys("SIU_PLUGIN_CATCH_ERR", value);
 	}
 
-	private pkg() {
+	private pkg(meta?: Record<string, any>) {
+		if (meta) {
+			if (!this._currentPkg) return;
+
+			const data = PkgCaches[this._currentPkg];
+
+			data.meta = {
+				...data.meta,
+				...meta
+			};
+			return;
+		}
+
 		return this._currentPkg
 			? PkgCaches[this._currentPkg] || (PkgCaches[this._currentPkg] = getPkgData(this._currentPkg, process.cwd()))
 			: null;
-	}
-
-	private refreshPkgMeta(meta: Record<string, any>) {
-		if (!this._currentPkg) return;
-
-		const data = PkgCaches[this._currentPkg];
-
-		data.meta = {
-			...data.meta,
-			...meta
-		};
 	}
 
 	private async next(err?: Error) {
