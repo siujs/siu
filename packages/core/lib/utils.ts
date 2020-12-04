@@ -96,9 +96,11 @@ export function getPkgData(pkgName: string, cwd = process.cwd()): PkgData {
  * 获取通过优先级排序的packag目录名称列表
  *
  *  priority: 主要是通过各个package被引用的计数大小倒排
+ *
+ * @param cwd current workspace directory
  */
-export async function getSortedPkgByPriority() {
-	const pkgPaths = await getPackagePaths();
+export async function getSortedPkgByPriority(cwd = process.cwd()) {
+	const pkgPaths = await getPackagePaths(cwd);
 
 	const kv = {} as Record<string, number>;
 
@@ -127,4 +129,23 @@ export async function getSortedPkgByPriority() {
 		}, [] as string[][])
 		.reverse()
 		.flat();
+}
+
+/**
+ *
+ * Find up working directory of `siu.config.js `
+ *
+ * @param cwd current workspace directory
+ * @param deep search deep
+ */
+export async function findUpSiuConfigCwd(cwd = process.cwd(), deep = 3): Promise<string> {
+	if (deep === 0) return "";
+
+	const hasSiuConfig = await fs.pathExists(path.resolve(cwd, "./siu.config.js"));
+
+	if (!hasSiuConfig) {
+		return await findUpSiuConfigCwd(path.resolve(cwd, "../"), deep - 1);
+	}
+
+	return cwd;
 }
