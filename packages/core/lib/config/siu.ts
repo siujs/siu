@@ -16,11 +16,12 @@ export function resolveSiuConfig(cwd: string) {
 
 	const siuConfig = require(configFile) as SiuConfig;
 
-	if (!siuConfig.plugins || !siuConfig.plugins.length) {
-		throw new Error("[@siujs/core] Error: `plugins` can't be empty!");
-	}
-
 	siuConfig.pkgsOrder = siuConfig.pkgsOrder || "priority";
+
+	if (!siuConfig.plugins || !siuConfig.plugins.length) {
+		console.warn("[@siujs/core] Warning: `plugins` can't be empty!");
+		return siuConfig;
+	}
 
 	const { plugins } = siuConfig;
 
@@ -82,6 +83,8 @@ export class SiuConfiger {
 		if (this.isResolved) return;
 
 		const { plugins } = this._config;
+
+		if (!plugins || !plugins.length) return;
 
 		try {
 			plugins.forEach(plug => {
