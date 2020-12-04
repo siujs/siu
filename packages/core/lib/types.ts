@@ -33,7 +33,7 @@ export interface PkgData {
 	root: string;
 }
 
-export type PluginCommand = "creation" | "genDocs" | "test" | "build" | "publish" | "glint";
+export type PluginCommand = "creation" | "genDocs" | "test" | "build" | "publish" | "glint" | "deps";
 
 export type PluginCommandLifecycle = "start" | "process" | "complete" | "error" | "clean";
 
