@@ -1,7 +1,7 @@
 import { getSiuConfiger } from "./config/siu";
 import { getPlugin, getPlugins, SiuPlugin } from "./plugin";
 import { HookHandler, PluginCommand, PluginCommandLifecycle } from "./types";
-import { getMetasOfPackages, getPackageDirs, getPkgDirName, getSortedPkgByPriority } from "./utils";
+import { findUpSiuConfigCwd, getMetasOfPackages, getPackageDirs, getPkgDirName, getSortedPkgByPriority } from "./utils";
 
 /**
  *
@@ -29,10 +29,48 @@ export function hasCommandHooks(cmd: PluginCommand) {
 
 /**
  *
- * 应用插件
+ * adjust current workspace directory
  *
- * @param cmd 当前执行的命令
- * @param opts 执行命令所携带的配置参数
+ */
+async function adjustCWD() {
+	const siuConfigCWD = await findUpSiuConfigCwd();
+
+	if (!siuConfigCWD) {
+		throw new Error(`[siu] ERROR: Cant't find root workspace directory of \`siu.config.js\``);
+	}
+
+	process.chdir(siuConfigCWD);
+}
+
+/**
+ *
+ * apply plugins without package
+ *
+ * @param cmd client command
+ * @param opts options of current client command
+ */
+export async function applyPluginsNoPkg(cmd: PluginCommand, opts: { [x: string]: any }) {
+	await adjustCWD();
+
+	getSiuConfiger().resolvePlugins();
+
+	const plugs = getPlugins();
+
+	for (let i = 0; i < plugs.length; i++) {
+		await plugs[i].process(cmd, opts);
+	}
+
+	await Promise.all(plugs.map(plug => plug.clean()));
+
+	return;
+}
+
+/**
+ *
+ * apply plugins with package
+ *
+ * @param cmd client command
+ * @param opts options of current client command
  */
 export async function applyPlugins(
 	cmd: PluginCommand,
@@ -41,19 +79,11 @@ export async function applyPlugins(
 		[x: string]: any;
 	}
 ) {
+	await adjustCWD();
+
 	const configer = getSiuConfiger().resolvePlugins();
 
 	const plugs = getPlugins();
-
-	if (cmd === "glint") {
-		for (let i = 0; i < plugs.length; i++) {
-			await plugs[i].process("glint", opts);
-		}
-
-		await Promise.all(plugs.map(plug => plug.clean()));
-
-		return;
-	}
 
 	const { pkgNames, ...options } = opts;
 
