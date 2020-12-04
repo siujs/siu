@@ -24,7 +24,7 @@ export async function changeDeps(pkg: string, depStr: string, action: "add" | "r
 
 	detectYarn();
 
-	const pkgPath = getPkgPath(pkg);
+	const cwd = pkg ? getPkgPath(pkg) : process.cwd();
 
 	const { deps = [], devDeps = [] } = depsMap;
 
@@ -34,10 +34,10 @@ export async function changeDeps(pkg: string, depStr: string, action: "add" | "r
 				.concat(devDeps || [])
 				.map(it => it.name)
 				.join(" ")}`,
-			{ cwd: pkgPath }
+			{ cwd }
 		);
 	} else {
-		deps.length && (await addDeps(deps, pkgPath));
-		devDeps.length && (await addDeps(devDeps, pkgPath, true));
+		deps.length && (await addDeps(deps, cwd));
+		devDeps.length && (await addDeps(devDeps, cwd, true));
 	}
 }
