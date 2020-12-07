@@ -20,14 +20,26 @@ export class PublishContext {
 		return path.resolve(this._cwd, "node_modules/.bin/", name);
 	}
 
+	root() {
+		return this._cwd;
+	}
+
 	pkgRoot(pkg: string) {
 		return path.resolve(this._cwd, "packages", pkg);
 	}
 
-	packages() {
+	pkgMetaPath(pkg: string) {
+		return path.resolve(this._cwd, "packages", pkg, "package.json");
+	}
+
+	pkgDirs() {
 		return fs
 			.readdirSync(path.resolve(this._cwd, "../packages"))
 			.filter(p => !p.startsWith(".") && fs.statSync(this.pkgRoot(p)).isDirectory());
+	}
+
+	pkgRoots() {
+		return this.pkgDirs().map(dir => this.pkgRoot(dir));
 	}
 }
 

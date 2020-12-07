@@ -30,6 +30,11 @@
   "homepage": "https://github.com/siujs/siu#readme",
   "dependencies": {
     "chalk": "^4.1.0",
-    "execa": "^5.0.0"
+    "execa": "^5.0.0",
+    "fs-extra": "^9.0.1",
+    "semver": "^7.3.4"
+  },
+  "devDependencies": {
+    "@types/fs-extra": "^9.0.4"
   }
 }
