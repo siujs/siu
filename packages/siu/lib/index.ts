@@ -3,10 +3,11 @@ import fs from "fs-extra";
 import path from "path";
 import validProjectName from "validate-npm-package-name";
 
+import { changeDeps } from "@siujs/cmd-deps";
+import { lintWithGHooks } from "@siujs/cmd-glint";
+import { initApp } from "@siujs/cmd-init";
+import { release } from "@siujs/cmd-publish";
 import { applyPlugins, applyPluginsNoPkg, getPkgDirName, hasCommandHooks, PluginCommand } from "@siujs/core";
-import { changeDeps } from "@siujs/deps";
-import { useDefaultGitHook } from "@siujs/git-hooks";
-import { initApp } from "@siujs/init-app";
 
 interface CommonOptions {
 	pkgs?: string;
@@ -90,28 +91,25 @@ export async function runCmd<T extends CommonOptions>(cmd: PluginCommand | "init
 
 	try {
 		if (!hasCommandHooks(cmd)) {
-			if (cmd === "deps") {
-				// invoke official processing for deps handle
-				await changeDeps(pkgNames, rest.deps, rest.action);
-				return;
-			}
-
-			if (cmd === "glint") {
-				// invoke official processing for git hooks
-				await useDefaultGitHook(options.hook, process.cwd());
-				return;
-			}
-
-			if (cmd === "publish") {
-				// invoke official processing for publisher
-				return;
+			switch (cmd) {
+				case "deps":
+					// invoke official processing: cmd-deps
+					return await changeDeps(pkgNames, rest.deps, rest.action);
+				case "glint":
+					// invoke official processing: cmd-glint
+					return await lintWithGHooks(options.hook, process.cwd());
+				case "publish":
+					// invoke official processing: cmd-publish
+					return await release();
 			}
 
 			console.log(chalk.yellowBright(`[siu] Warning: Can't find any plugins to handle '${cmd}'`));
 			return;
 		}
 
-		cmd === "glint" || cmd === "deps" ? await applyPluginsNoPkg(cmd, options) : await applyPlugins(cmd, options);
+		cmd === "glint" || cmd === "deps" || cmd === "publish"
+			? await applyPluginsNoPkg(cmd, options)
+			: await applyPlugins(cmd, options);
 	} catch (ex) {
 		console.error(ex);
 		process.exit(1);

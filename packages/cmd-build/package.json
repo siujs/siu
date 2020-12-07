@@ -1,55 +1,50 @@
 {
-  "name": "siu",
+  "name": "@siujs/cmd-build",
   "version": "1.0.0",
-  "description": "cli of siujs",
+  "description": "rollup of siujs",
   "keywords": [
-    "cli",
-    "siu",
+    "rollup",
     "siujs"
   ],
   "author": "buns <kuafujs@126.com>",
   "license": "MIT",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
-  "types": "dist/siu.d.ts",
-  "typings": "dist/siu.d.ts",
+  "types": "dist/cmd-build.d.ts",
+  "typings": "dist/cmd-build.d.ts",
   "directories": {
     "lib": "lib",
     "test": "__tests__"
   },
-  "bin": {
-    "siu": "./bin/siu.js"
-  },
   "files": [
-    "bin",
     "dist"
   ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/siujs/siu.git"
   },
-  "scripts": {
-    "build": "tsc -b tsconfig.json"
-  },
   "bugs": {
     "url": "https://github.com/siujs/siu/issues"
   },
   "homepage": "https://github.com/siujs/siu#readme",
   "dependencies": {
-    "@siujs/core": "1.0.0",
-    "@siujs/cmd-deps": "1.0.0",
-    "@siujs/cmd-glint": "1.0.0",
-    "@siujs/cmd-init": "1.0.0",
-    "@siujs/cmd-publish": "1.0.0",
-    "@siujs/utils": "1.0.0",
+    "@microsoft/api-extractor": "^7.12.0",
+    "@rollup/plugin-commonjs": "^17.0.0",
+    "@rollup/plugin-node-resolve": "^11.0.0",
+    "@rollup/plugin-replace": "^2.3.4",
+    "@rollup/pluginutils": "^4.1.0",
+    "@siujs/utils": "^1.0.0",
     "chalk": "^4.1.0",
-    "commander": "^6.2.0",
+    "esbuild": "^0.8.17",
     "fs-extra": "^9.0.1",
+    "pretty-ms": "^7.0.1",
+    "rollup": "^2.34.0",
+    "rollup-plugin-gzip": "^2.5.0",
+    "rollup-plugin-terser": "^7.0.2",
     "shelljs": "^0.8.4",
-    "validate-npm-package-name": "^3.0.0"
+    "zlib": "^1.0.5"
   },
   "devDependencies": {
-    "@types/fs-extra": "^9.0.4",
-    "@types/validate-npm-package-name": "^3.0.1"
+    "@types/fs-extra": "^9.0.4"
   }
 }

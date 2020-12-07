@@ -7,7 +7,7 @@ const shelljs = require("shelljs");
 
 const packagesRoot = path.resolve(__dirname, "../packages/");
 
-const pkgDirList = ["utils", "core", "deps", "init-app", "git-hooks", "release", "siu", "builder"];
+const pkgDirList = ["utils", "core", "cmd-build", "cmd-deps", "cmd-glint", "cmd-init", "cmd-publish", "siu"];
 
 async function runApiExtractor(pkgName) {
 	const { Extractor, ExtractorConfig } = require("@microsoft/api-extractor");

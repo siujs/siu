@@ -1,11 +1,11 @@
-# `@siujs/builder`
+# `@siujs/cmd-deps`
 
 > TODO: description
 
 ## Usage
 
 ```
-const rollup = require('@siujs/builder');
+const deps = require('@siujs/cmd-deps');
 
 // TODO: DEMONSTRATE API
 ```

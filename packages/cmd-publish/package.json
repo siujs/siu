@@ -1,17 +1,18 @@
 {
-  "name": "@siujs/deps",
+  "name": "@siujs/cmd-publish",
   "version": "1.0.0",
-  "description": "deps handle of siujs",
+  "description": "release handler for siujs as fallback",
   "keywords": [
-    "deps",
-    "siujs"
+    "publish",
+    "release",
+    "siu"
   ],
   "author": "buns <kuafujs@126.com>",
   "license": "MIT",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
-  "types": "dist/deps.d.ts",
-  "typings": "dist/deps.d.ts",
+  "types": "dist/cmd-publish.d.ts",
+  "typings": "dist/cmd-publish.d.ts",
   "directories": {
     "lib": "lib",
     "test": "__tests__"
@@ -28,11 +29,7 @@
   },
   "homepage": "https://github.com/siujs/siu#readme",
   "dependencies": {
-    "@siujs/utils": "^1.0.0",
-    "fs-extra": "^9.0.1",
-    "shelljs": "^0.8.4"
-  },
-  "devDependencies": {
-    "@types/fs-extra": "^9.0.4"
+    "chalk": "^4.1.0",
+    "execa": "^5.0.0"
   }
 }

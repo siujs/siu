@@ -1,5 +1,5 @@
 {
-  "name": "@siujs/git-hooks",
+  "name": "@siujs/cmd-glint",
   "version": "1.0.0",
   "description": "git hooks for siujs",
   "keywords": [
@@ -11,8 +11,8 @@
   "license": "MIT",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
-  "types": "dist/git-hooks.d.ts",
-  "typings": "dist/git-hooks.d.ts",
+  "types": "dist/cmd-glint.d.ts",
+  "typings": "dist/cmd-glint.d.ts",
   "directories": {
     "lib": "lib",
     "test": "__tests__"

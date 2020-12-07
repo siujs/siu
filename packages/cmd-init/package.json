@@ -1,5 +1,5 @@
 {
-  "name": "@siujs/init-app",
+  "name": "@siujs/cmd-init",
   "version": "1.0.0",
   "description": "init application of siujs",
   "keywords": [
@@ -10,8 +10,8 @@
   "license": "MIT",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
-  "types": "dist/init-app.d.ts",
-  "typings": "dist/init-app.d.ts",
+  "types": "dist/cmd-init.d.ts",
+  "typings": "dist/cmd-init.d.ts",
   "directories": {
     "lib": "lib",
     "test": "__tests__"

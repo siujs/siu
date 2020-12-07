@@ -1,11 +1,11 @@
-# `@siujs/init-app`
+# `@siujs/cmd-build`
 
 > TODO: description
 
 ## Usage
 
 ```
-const initApp = require('@siujs/init-app');
+const rollup = require('@siujs/cmd-build');
 
 // TODO: DEMONSTRATE API
 ```

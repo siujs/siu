@@ -71,7 +71,7 @@ export async function generateDTSWithTSC(pkgData: PkgData) {
 	const exists = await fs.pathExists(tscCmdPath);
 
 	if (!exists) {
-		throw new Error(`[@siujs/builder] Error: Cant't find typescript in \`${pkgRoot}\``);
+		throw new Error(`[@siujs/cmd-build] Error: Cant't find typescript in \`${pkgRoot}\``);
 	}
 
 	shell.exec(`${tscCmdPath} --emitDeclarationOnly`, {

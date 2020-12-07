@@ -44,10 +44,10 @@ test(" isLocalPackage ", async done => {
 
 	const depsVersion = require(path.resolve(process.cwd(), "packages", "deps", "package.json")).version;
 
-	let version = await isLocalPackage("@siujs/deps");
+	let version = await isLocalPackage("@siujs/cmd-deps");
 	expect(version).toBe(depsVersion);
 
-	version = await isLocalPackage("@siujs/deps2");
+	version = await isLocalPackage("@siujs/cmd-deps2");
 	expect(version).toBe("");
 
 	done();
@@ -65,7 +65,7 @@ test(" getPkgMeta ", async done => {
 
 	expect(meta).toHaveProperty("name");
 	expect(meta).toHaveProperty("version");
-	expect(meta.name).toBe("@siujs/deps");
+	expect(meta.name).toBe("@siujs/cmd-deps");
 	expect(meta.version).toBe("1.0.0");
 
 	done();

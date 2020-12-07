@@ -1,11 +1,11 @@
-# `@siujs/deps`
+# `@siujs/cmd-init`
 
 > TODO: description
 
 ## Usage
 
 ```
-const deps = require('@siujs/deps');
+const initApp = require('@siujs/cmd-init');
 
 // TODO: DEMONSTRATE API
 ```
