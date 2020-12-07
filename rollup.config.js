@@ -57,7 +57,7 @@ const configs = pkgDirList.map(pkgDir => {
 				namedExports: false
 			}),
 			nodeResolve({
-				preferBuiltins: true
+				preferBuiltins: false
 			}),
 			cjs(),
 			externals(),
