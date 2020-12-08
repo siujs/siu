@@ -3,6 +3,7 @@ import fs from "fs-extra";
 import path from "path";
 import validProjectName from "validate-npm-package-name";
 
+import { simpleBuild } from "@siujs/cmd-build";
 import { changeDeps } from "@siujs/cmd-deps";
 import { lintWithGHooks } from "@siujs/cmd-glint";
 import { initApp } from "@siujs/cmd-init";
@@ -92,6 +93,9 @@ export async function runCmd<T extends CommonOptions>(cmd: PluginCommand | "init
 	try {
 		if (!hasCommandHooks(cmd)) {
 			switch (cmd) {
+				case "build":
+					// invoke official processing: cmd-build
+					return await simpleBuild(pkgNames);
 				case "deps":
 					// invoke official processing: cmd-deps
 					return await changeDeps(pkgNames, rest.deps, rest.action);
