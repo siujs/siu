@@ -4,7 +4,7 @@ import { PublishContext } from "../ctx";
 import { log } from "../utils";
 
 export async function commitChanges(ctx: PublishContext) {
-	const { stdout } = await execa("git", ["diff"], { stdio: "inherit" });
+	const { stdout } = await execa("git", ["diff"], { stdio: "pipe" });
 
 	if (stdout) {
 		log("\nCommitting Changes....");
