@@ -4,6 +4,7 @@ const chalk = require("chalk");
 const fs = require("fs-extra");
 const path = require("path");
 const program = require("commander");
+const { prompt } = require("inquirer");
 
 const { validPkgName, isPkgExists, findUnfoundPkgs, runCmd } = require("../dist/index");
 
