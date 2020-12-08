@@ -76,7 +76,7 @@ export class PublishContext {
 
 	pkgDirs() {
 		return fs
-			.readdirSync(path.resolve(this._cwd, "../packages"))
+			.readdirSync(path.resolve(this._cwd, "packages"))
 			.filter(p => !p.startsWith(".") && fs.statSync(this.pkgRoot(p)).isDirectory());
 	}
 
