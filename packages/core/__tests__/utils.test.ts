@@ -19,7 +19,7 @@ test("getPackageDirs", async done => {
 	const dirs = await getPackageDirs(cwd);
 
 	expect(JSON.stringify(dirs)).toBe(
-		JSON.stringify(["builder", "core", "deps", "git-hooks", "init-app", "release", "siu", "utils"])
+		JSON.stringify(["cmd-build", "cmd-deps", "cmd-glint", "cmd-init", "cmd-publish", "core", "siu", "utils"])
 	);
 
 	done();
@@ -30,7 +30,7 @@ test("getPackagePaths", async done => {
 
 	expect(JSON.stringify(dirs)).toBe(
 		JSON.stringify(
-			["builder", "core", "deps", "git-hooks", "init-app", "release", "siu", "utils"].map(it =>
+			["cmd-build", "cmd-deps", "cmd-glint", "cmd-init", "cmd-publish", "core", "siu", "utils"].map(it =>
 				path.resolve(cwd, "packages", it)
 			)
 		)
@@ -50,14 +50,14 @@ test("getMetasOfPackages", async done => {
 
 	expect(!!metas).toBe(true);
 
-	expect(metas).toHaveProperty("utils");
+	expect(metas).toHaveProperty("cmd-build");
+	expect(metas).toHaveProperty("cmd-deps");
+	expect(metas).toHaveProperty("cmd-glint");
+	expect(metas).toHaveProperty("cmd-init");
+	expect(metas).toHaveProperty("cmd-publish");
 	expect(metas).toHaveProperty("core");
-	expect(metas).toHaveProperty("deps");
-	expect(metas).toHaveProperty("git-hooks");
-	expect(metas).toHaveProperty("init-app");
-	expect(metas).toHaveProperty("release");
 	expect(metas).toHaveProperty("siu");
-	expect(metas).toHaveProperty("builder");
+	expect(metas).toHaveProperty("utils");
 
 	done();
 });
@@ -89,7 +89,7 @@ test("getSortedPkgByPriority", async done => {
 	const sortedPkgs = await getSortedPkgByPriority(cwd);
 
 	expect(JSON.stringify(sortedPkgs)).toBe(
-		JSON.stringify(["utils", "core", "deps", "git-hooks", "init-app", "release", "siu", "builder"])
+		JSON.stringify(["utils", "core", "cmd-build", "cmd-deps", "cmd-glint", "cmd-init", "cmd-publish", "siu"])
 	);
 
 	done();

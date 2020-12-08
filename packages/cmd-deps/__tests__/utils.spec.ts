@@ -42,7 +42,7 @@ test(" analysisDepsStr ", () => {
 test(" isLocalPackage ", async done => {
 	process.chdir(path.resolve(__dirname, "../../../"));
 
-	const depsVersion = require(path.resolve(process.cwd(), "packages", "deps", "package.json")).version;
+	const depsVersion = require(path.resolve(process.cwd(), "packages", "cmd-deps", "package.json")).version;
 
 	let version = await isLocalPackage("@siujs/cmd-deps");
 	expect(version).toBe(depsVersion);
@@ -55,13 +55,13 @@ test(" isLocalPackage ", async done => {
 
 test(" getPkgPath ", () => {
 	process.chdir(path.resolve(__dirname, "../../../"));
-	expect(getPkgPath("deps")).toBe(path.resolve(process.cwd(), "packages", "deps"));
+	expect(getPkgPath("cmd-deps")).toBe(path.resolve(process.cwd(), "packages", "cmd-deps"));
 });
 
 test(" getPkgMeta ", async done => {
 	process.chdir(path.resolve(__dirname, "../../../"));
 
-	const meta = await getPkgMeta("deps");
+	const meta = await getPkgMeta("cmd-deps");
 
 	expect(meta).toHaveProperty("name");
 	expect(meta).toHaveProperty("version");
