@@ -154,8 +154,6 @@ export interface BuilderSizeInfo {
 	brotli: string;
 }
 
-const extensions = [".js", ".jsx", ".ts", ".tsx"];
-
 export class SiuRollupBuilder {
 	protected pkgData: PkgData;
 	protected config: Config;
@@ -172,22 +170,17 @@ export class SiuRollupBuilder {
 		config
 			.input(path.resolve(this.pkgData.path, "lib/index.ts"))
 			.plugin("nodeResolve")
-			.use(nodeResolve, [
-				{
-					extensions,
-					mainFields: ["module", "main", "browser"]
-				}
-			])
+			.use(nodeResolve, [{ preferBuiltins: false }])
 			.end()
 			.plugin("commonjs")
 			.use(commonjs)
 			.end()
 			.plugin("replace")
-			.use(replace, [
-				{
-					"process.env.NODE_ENV": JSON.stringify("production")
-				}
-			]);
+			.use(replace, [{ "process.env.NODE_ENV": JSON.stringify("production") }]);
+
+		config.treeshake({
+			moduleSideEffects: false
+		});
 
 		return config;
 	}

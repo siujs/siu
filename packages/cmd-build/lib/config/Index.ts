@@ -10,6 +10,7 @@ export interface Config {
 	external: ChainedSet<Config, string>;
 	plugin(name: string): Plugin<Config>;
 	output(key: TOutputFormatKey): Output<Config>;
+	treeshake(value: Record<string, any>): Config;
 }
 
 export class Config extends ChainedMap<void, any> {
@@ -24,7 +25,7 @@ export class Config extends ChainedMap<void, any> {
 
 		this.outputs = new ChainedMap<Config, Output<Config>>(this);
 
-		this.extend(["input"]);
+		this.extend(["input", "treeshake"]);
 	}
 
 	output(key: TOutputFormatKey): Output<Config> {
