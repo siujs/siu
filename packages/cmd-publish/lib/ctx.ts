@@ -1,11 +1,53 @@
 import fs from "fs";
 import path from "path";
 
+export interface PublishContextOptions {
+	/**
+	 * Whether to use independent version for each package or special version string
+	 */
+	version?: "independent" | string;
+	/**
+	 *
+	 * Custom published registry url
+	 *
+	 */
+	publishRegistry?: string;
+	/**
+	 *
+	 * default git remote name
+	 *
+	 */
+	gitRemoteName?: "origin" | string;
+	/**
+	 *
+	 * Special tag of target package
+	 *
+	 */
+	pkgTag?: (pkgName: string) => string | null;
+	/**
+	 *
+	 * Whether skip step of build
+	 *
+	 */
+	skipStep?: "lint" | "build" | "pushToGit";
+}
+
+const DEFAULT_OPTIONS = {
+	independent: false,
+	gitRemoteName: "origin"
+};
+
 export class PublishContext {
 	private _cwd: string;
 	private _version: string;
-	constructor(cwd: string) {
+	private readonly _opts: PublishContextOptions;
+	constructor(cwd: string, opts: PublishContextOptions) {
 		this._cwd = cwd;
+		this._opts = { ...DEFAULT_OPTIONS, ...(opts || {}) };
+	}
+
+	opts<T extends keyof PublishContextOptions>(key: T): PublishContextOptions[T] {
+		return this._opts[key];
 	}
 
 	version(version?: string) {
@@ -41,10 +83,4 @@ export class PublishContext {
 	pkgRoots() {
 		return this.pkgDirs().map(dir => this.pkgRoot(dir));
 	}
-}
-
-let instance: PublishContext;
-
-export function getContext() {
-	return instance || (instance = new PublishContext(process.cwd()));
 }

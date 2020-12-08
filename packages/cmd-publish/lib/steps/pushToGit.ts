@@ -9,6 +9,6 @@ export async function pushToGit(ctx: PublishContext) {
 	const newTag = `v${ctx.version()}`;
 
 	await execa("git", ["tag", newTag]);
-	await execa("git", ["push", "origin", `refs/tags/${newTag}`]);
+	await execa("git", ["push", ctx.opts("gitRemoteName"), `refs/tags/${newTag}`]);
 	await execa("git", ["push"]);
 }

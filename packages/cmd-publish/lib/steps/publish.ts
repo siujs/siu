@@ -11,6 +11,8 @@ export async function publish(ctx: PublishContext) {
 
 	const pkgRoots = ctx.pkgRoots();
 
+	const customPkgTag = ctx.opts("pkgTag");
+
 	for (let l = pkgRoots.length; l--; ) {
 		const pkgName = path.basename(pkgRoots[l]);
 
@@ -20,11 +22,27 @@ export async function publish(ctx: PublishContext) {
 
 		log(`Publishing ${pkgName}...`);
 
+		const releaseTag = customPkgTag ? customPkgTag(pkgName) : null;
+
+		const publishRegistry = ctx.opts("publishRegistry") || null;
+
 		try {
-			await execa("yarn", ["publish", "--new-version", version, "--access", "public"], {
-				cwd: pkgRoots[l],
-				stdio: "pipe"
-			});
+			await execa(
+				"yarn",
+				[
+					"publish",
+					"--new-version",
+					version,
+					...(releaseTag ? ["--tag", releaseTag] : []),
+					"--access",
+					"public",
+					...(publishRegistry ? ["--registry", publishRegistry] : [])
+				],
+				{
+					cwd: pkgRoots[l],
+					stdio: "pipe"
+				}
+			);
 			console.log(chalk.green(`Successfully published ${pkgName}@${version}`));
 		} catch (e) {
 			if (e.stderr.match(/previously published/)) {
