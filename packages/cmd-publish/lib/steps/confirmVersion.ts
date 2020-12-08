@@ -21,7 +21,7 @@ export async function confirmVersion(ctx: PublishContext) {
 	if (!targetVersion) {
 		const meta = await fs.readJSON(path.resolve(ctx.root(), "package.json"));
 
-		const rootVersion = meta.version || "0.0.0-0";
+		const rootVersion = meta.version || "0.0.0-alpha";
 
 		const prereleaseArr = semver.prerelease(rootVersion);
 
@@ -63,4 +63,6 @@ export async function confirmVersion(ctx: PublishContext) {
 	if (!yes) {
 		process.exit(1);
 	}
+
+	ctx.version(targetVersion);
 }
