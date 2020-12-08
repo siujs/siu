@@ -1,4 +1,4 @@
-import fs from "fs";
+import fs from "fs-extra";
 import path from "path";
 
 export interface PublishContextOptions {
@@ -29,7 +29,7 @@ export interface PublishContextOptions {
 	 * Whether skip step of build
 	 *
 	 */
-	skipStep?: "lint" | "build" | "pushToGit";
+	skipStep?: ("lint" | "build" | "pushToGit")[];
 }
 
 const DEFAULT_OPTIONS = {

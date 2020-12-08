@@ -31,22 +31,22 @@ export const DEFAULT_HOOKS = {
 export async function release(opts: PublishContextOptions = {}, hooks = DEFAULT_HOOKS) {
 	const ctx = new PublishContext(process.cwd(), opts);
 
-	const skipStep = ctx.opts("skipStep");
+	const skipStep = ctx.opts("skipStep") || [];
 
 	try {
 		hooks.confirmVersion && (await hooks.confirmVersion(ctx));
 
-		skipStep !== "lint" && hooks.lint && (await hooks.lint(ctx));
+		!skipStep.includes("lint") && hooks.lint && (await hooks.lint(ctx));
 
 		hooks.updateCrossDeps && (await hooks.updateCrossDeps(ctx));
 
-		skipStep !== "build" && hooks.build && (await hooks.build(ctx));
+		!skipStep.includes("build") && hooks.build && (await hooks.build(ctx));
 
 		hooks.commitChanges && (await hooks.commitChanges(ctx));
 
 		hooks.publish && (await hooks.publish(ctx));
 
-		skipStep !== "pushToGit" && hooks.pushToGit && (await hooks.pushToGit(ctx));
+		!skipStep.includes("pushToGit") && hooks.pushToGit && (await hooks.pushToGit(ctx));
 
 		log(`\n run finished - run git diff to see package changes.`);
 	} catch (ex) {
