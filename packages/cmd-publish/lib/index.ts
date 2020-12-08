@@ -6,7 +6,6 @@ import { lint } from "./steps/lint";
 import { publish } from "./steps/publish";
 import { pushToGit } from "./steps/pushToGit";
 import { updateCrossDeps } from "./steps/updateCrossDeps";
-import { log } from "./utils";
 
 export interface PublishHooks {
 	confirmVersion: (ctx: PublishContext) => Promise<void>;
@@ -47,8 +46,6 @@ export async function release(opts: PublishContextOptions = {}, hooks = DEFAULT_
 		hooks.publish && (await hooks.publish(ctx));
 
 		!skipStep.includes("pushToGit") && hooks.pushToGit && (await hooks.pushToGit(ctx));
-
-		log(`\n run finished - run git diff to see package changes.`);
 	} catch (ex) {
 		throw ex;
 	}

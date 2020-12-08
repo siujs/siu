@@ -22,6 +22,8 @@ export async function updateCrossDeps(ctx: PublishContext) {
 
 	depTypes.forEach(depType => {
 		metas.forEach(meta => {
+			meta.version = version;
+
 			if (!meta[depType]) return;
 
 			Object.keys(meta[depType]).forEach(key => {

@@ -5,5 +5,5 @@ import { log } from "../utils";
 
 export async function build(ctx: PublishContext) {
 	log("\n Building packages...");
-	await execa("yarn", ["build"]);
+	await execa("yarn", ["build"], { stdio: "inherit" });
 }

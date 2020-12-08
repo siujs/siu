@@ -28,11 +28,9 @@ export async function publish(ctx: PublishContext) {
 
 		try {
 			await execa(
-				"yarn",
+				"npm",
 				[
 					"publish",
-					"--new-version",
-					version,
 					...(releaseTag ? ["--tag", releaseTag] : []),
 					"--access",
 					"public",
@@ -40,7 +38,7 @@ export async function publish(ctx: PublishContext) {
 				],
 				{
 					cwd: pkgRoots[l],
-					stdio: "pipe"
+					stdio: "inherit"
 				}
 			);
 			console.log(chalk.green(`Successfully published ${pkgName}@${version}`));
