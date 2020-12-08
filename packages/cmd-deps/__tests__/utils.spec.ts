@@ -64,9 +64,7 @@ test(" getPkgMeta ", async done => {
 	const meta = await getPkgMeta("cmd-deps");
 
 	expect(meta).toHaveProperty("name");
-	expect(meta).toHaveProperty("version");
 	expect(meta.name).toBe("@siujs/cmd-deps");
-	expect(meta.version).toBe("1.0.0");
 
 	done();
 });
