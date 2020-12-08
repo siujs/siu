@@ -1,6 +1,6 @@
 {
   "name": "@siujs/cmd-publish",
-  "version": "1.0.0",
+  "version": "0.0.0",
   "description": "release handler for siujs as fallback",
   "keywords": [
     "publish",

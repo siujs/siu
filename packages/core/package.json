@@ -1,6 +1,6 @@
 {
   "name": "@siujs/core",
-  "version": "1.0.0",
+  "version": "0.0.0",
   "description": "core of @siujs",
   "keywords": [],
   "author": "buns <kuafujs@126.com>",
@@ -25,7 +25,7 @@
   },
   "homepage": "https://github.com/siujs/siu#readme",
   "dependencies": {
-    "@siujs/utils": "^1.0.0",
+    "@siujs/utils": "1.0.0-alpha.0",
     "chalk": "^4.1.0",
     "fs-extra": "^9.0.1"
   },

@@ -1,6 +1,6 @@
 {
   "name": "@siujs/cmd-init",
-  "version": "1.0.0",
+  "version": "0.0.0",
   "description": "init application of siujs",
   "keywords": [
     "init",
@@ -28,7 +28,7 @@
   },
   "homepage": "https://github.com/siujs/siu#readme",
   "dependencies": {
-    "@siujs/utils": "^1.0.0",
+    "@siujs/utils": "1.0.0-alpha.0",
     "chalk": "^4.1.0",
     "fs-extra": "^9.0.1",
     "pretty-ms": "^7.0.1",
