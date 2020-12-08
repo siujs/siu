@@ -28,7 +28,7 @@
   },
   "homepage": "https://github.com/siujs/siu#readme",
   "dependencies": {
-    "@siujs/utils": "1.0.0-alpha.0",
+    "@siujs/utils": "file:../utils",
     "chalk": "^4.1.0",
     "fs-extra": "^9.0.1",
     "pretty-ms": "^7.0.1",
