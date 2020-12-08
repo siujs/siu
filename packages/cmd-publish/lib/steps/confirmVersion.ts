@@ -1,4 +1,5 @@
-import { prompt } from "inquirer";
+import fs from "fs-extra";
+import inquirer from "inquirer";
 import path from "path";
 import semver, { ReleaseType } from "semver";
 
@@ -18,7 +19,9 @@ export async function confirmVersion(ctx: PublishContext) {
 	let targetVersion = ctx.opts("version");
 
 	if (!targetVersion) {
-		const rootVersion = require(path.resolve(ctx.root(), "package.json")).version || "0.0.0-0";
+		const meta = await fs.readJSON(path.resolve(ctx.root(), "package.json"));
+
+		const rootVersion = meta.version || "0.0.0-0";
 
 		const prereleaseArr = semver.prerelease(rootVersion);
 
@@ -26,7 +29,7 @@ export async function confirmVersion(ctx: PublishContext) {
 
 		const inc = (i: ReleaseType) => semver.inc(rootVersion, i, preId);
 
-		const { release } = await prompt({
+		const { release } = await inquirer.prompt({
 			type: "list",
 			name: "release",
 			message: "Select release type",
@@ -35,7 +38,7 @@ export async function confirmVersion(ctx: PublishContext) {
 
 		if (release === "custom") {
 			targetVersion = (
-				await prompt({
+				await inquirer.prompt({
 					type: "input",
 					name: "version",
 					message: "Input custom version",
@@ -51,7 +54,7 @@ export async function confirmVersion(ctx: PublishContext) {
 		throw new Error(`Invalid target version: ${targetVersion}`);
 	}
 
-	const { yes } = await prompt({
+	const { yes } = await inquirer.prompt({
 		type: "confirm",
 		name: "yes",
 		message: `Releasing v${targetVersion}. Confirm?`
