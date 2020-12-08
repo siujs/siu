@@ -1,6 +1,6 @@
 {
-  "name": "siu",
-  "version": "1.0.0-alpha.0",
+  "name": "siu-cli",
+  "version": "1.0.0",
   "description": "cli of siujs",
   "keywords": [
     "cli",
