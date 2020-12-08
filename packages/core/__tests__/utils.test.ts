@@ -19,7 +19,7 @@ test("getPackageDirs", async done => {
 	const dirs = await getPackageDirs(cwd);
 
 	expect(JSON.stringify(dirs)).toBe(
-		JSON.stringify(["cmd-build", "cmd-deps", "cmd-glint", "cmd-init", "cmd-publish", "core", "siu", "utils"])
+		JSON.stringify(["cli", "cmd-build", "cmd-deps", "cmd-glint", "cmd-init", "cmd-publish", "core", "utils"])
 	);
 
 	done();
@@ -30,7 +30,7 @@ test("getPackagePaths", async done => {
 
 	expect(JSON.stringify(dirs)).toBe(
 		JSON.stringify(
-			["cmd-build", "cmd-deps", "cmd-glint", "cmd-init", "cmd-publish", "core", "siu", "utils"].map(it =>
+			["cli", "cmd-build", "cmd-deps", "cmd-glint", "cmd-init", "cmd-publish", "core", "utils"].map(it =>
 				path.resolve(cwd, "packages", it)
 			)
 		)
@@ -56,7 +56,7 @@ test("getMetasOfPackages", async done => {
 	expect(metas).toHaveProperty("cmd-init");
 	expect(metas).toHaveProperty("cmd-publish");
 	expect(metas).toHaveProperty("core");
-	expect(metas).toHaveProperty("siu");
+	expect(metas).toHaveProperty("cli");
 	expect(metas).toHaveProperty("utils");
 
 	done();
@@ -89,16 +89,16 @@ test("getSortedPkgByPriority", async done => {
 	const sortedPkgs = await getSortedPkgByPriority(cwd);
 
 	expect(JSON.stringify(sortedPkgs)).toBe(
-		JSON.stringify(["utils", "core", "cmd-build", "cmd-deps", "cmd-glint", "cmd-init", "cmd-publish", "siu"])
+		JSON.stringify(["utils", "core", "cmd-publish", "cmd-init", "cmd-glint", "cmd-deps", "cmd-build", "cli"])
 	);
 
 	done();
 });
 
 test("findUpSiuConfigCwd", async done => {
-	const targetCWD = await findUpSiuConfigCwd(path.resolve(__dirname, "../"));
+	const targetCWD = await findUpSiuConfigCwd(__dirname);
 
-	expect(targetCWD).toBe(cwd);
+	expect(targetCWD).toBe(__dirname);
 
 	done();
 });
