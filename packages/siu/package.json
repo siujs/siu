@@ -1,6 +1,6 @@
 {
   "name": "siu",
-  "version": "1.0.0",
+  "version": "1.0.0-alpha.0",
   "description": "cli of siujs",
   "keywords": [
     "cli",
@@ -36,13 +36,13 @@
   },
   "homepage": "https://github.com/siujs/siu#readme",
   "dependencies": {
-    "@siujs/cmd-build": "^1.0.0",
-    "@siujs/cmd-deps": "1.0.0",
-    "@siujs/cmd-glint": "1.0.0",
-    "@siujs/cmd-init": "1.0.0",
-    "@siujs/cmd-publish": "1.0.0",
-    "@siujs/core": "1.0.0",
-    "@siujs/utils": "1.0.0",
+    "@siujs/cmd-build": "1.0.0-alpha.0",
+    "@siujs/cmd-deps": "1.0.0-alpha.0",
+    "@siujs/cmd-glint": "1.0.0-alpha.0",
+    "@siujs/cmd-init": "1.0.0-alpha.0",
+    "@siujs/cmd-publish": "1.0.0-alpha.0",
+    "@siujs/core": "1.0.0-alpha.0",
+    "@siujs/utils": "1.0.0-alpha.0",
     "chalk": "^4.1.0",
     "commander": "^6.2.0",
     "fs-extra": "^9.0.1",
