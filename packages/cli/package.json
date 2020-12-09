@@ -51,6 +51,6 @@
   },
   "devDependencies": {
     "@types/fs-extra": "^9.0.4",
-    "@types/validate-npm-package-name": "^3.0.1"
+    "@types/validate-npm-package-name": "^3.0.2"
   }
 }
