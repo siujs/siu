@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 import chalk from "chalk";
 import fs from "fs-extra";
 import path from "path";
@@ -176,7 +177,11 @@ export class SiuRollupBuilder {
 			.use(commonjs)
 			.end()
 			.plugin("replace")
-			.use(replace, [{ "process.env.NODE_ENV": JSON.stringify("production") }]);
+			.use(replace, [{ "process.env.NODE_ENV": JSON.stringify("production") }])
+			.end()
+			.plugin("nodeExternals")
+			.use(require("rollup-plugin-node-externals"))
+			.end();
 
 		config.treeshake({
 			moduleSideEffects: false
@@ -208,6 +213,18 @@ export class SiuRollupBuilder {
 				.end()
 				.plugin("mini")
 				.use(terser, [TerserOptions]);
+
+			Object.keys(this.pkgData.meta.dependencies || []).forEach(item => {
+				config
+					.output("umd-min")
+					.globals.set(
+						item,
+						camelize(
+							item.startsWith("@") && ~item.indexOf("/") ? item.replace(/^@[\w-]+(\.)?[\w-]+\//g, "") : item,
+							true
+						)
+					);
+			});
 		} else {
 			config
 				.output("umd")
@@ -215,6 +232,18 @@ export class SiuRollupBuilder {
 				.exports("named")
 				.name(this.pkgData.umdName)
 				.file(path.resolve(this.pkgData.path, `dist/${this.pkgData.dirName}.js`));
+
+			Object.keys(this.pkgData.meta.dependencies || []).forEach(item => {
+				config
+					.output("umd")
+					.globals.set(
+						item,
+						camelize(
+							item.startsWith("@") && ~item.indexOf("/") ? item.replace(/^@[\w-]+(\.)?[\w-]+\//g, "") : item,
+							true
+						)
+					);
+			});
 		}
 
 		return config;
@@ -231,12 +260,6 @@ export class SiuRollupBuilder {
 
 		Object.keys(this.pkgData.meta.dependencies || []).forEach(item => {
 			config.external.add(item);
-			config
-				.output(format)
-				.globals.set(
-					item,
-					camelize(item.startsWith("@") && ~item.indexOf("/") ? item.replace(/^@[\w-]+(\.)?[\w-]+\//g, "") : item, true)
-				);
 		});
 
 		return config;
