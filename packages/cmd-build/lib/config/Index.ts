@@ -53,6 +53,7 @@ export class Config extends ChainedMap<void, any> {
 		return this.clean({
 			input,
 			external,
+			treeshake: this.get("treeshake"),
 			plugins: this.plugins
 				.values()
 				.map(item => item.toConfig())
