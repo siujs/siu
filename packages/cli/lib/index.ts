@@ -8,7 +8,14 @@ import { changeDeps } from "@siujs/cmd-deps";
 import { lintWithGHooks } from "@siujs/cmd-glint";
 import { initApp } from "@siujs/cmd-init";
 import { release } from "@siujs/cmd-publish";
-import { applyPlugins, applyPluginsNoPkg, getPkgDirName, hasCommandHooks, PluginCommand } from "@siujs/core";
+import {
+	applyPlugins,
+	applyPluginsNoPkg,
+	getPackageDirs,
+	getPkgDirName,
+	hasCommandHooks,
+	PluginCommand
+} from "@siujs/core";
 
 interface CommonOptions {
 	pkgs?: string;
@@ -95,7 +102,7 @@ export async function runCmd<T extends CommonOptions>(cmd: PluginCommand | "init
 			switch (cmd) {
 				case "build":
 					// invoke official processing: cmd-build
-					return await simpleBuild(pkgNames);
+					return await simpleBuild(pkgNames || (await getPackageDirs()).join(","));
 				case "deps":
 					// invoke official processing: cmd-deps
 					return await changeDeps(pkgNames, rest.deps, rest.action);
