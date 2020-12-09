@@ -102,7 +102,9 @@ export async function runCmd<T extends CommonOptions>(cmd: PluginCommand | "init
 			switch (cmd) {
 				case "build":
 					// invoke official processing: cmd-build
-					return await simpleBuild(pkgNames || (await getPackageDirs()).join(","));
+					return await simpleBuild(pkgNames || (await getPackageDirs()).join(","), {
+						allowFormats: rest.format ? rest.format.split(",") : void 0
+					});
 				case "deps":
 					// invoke official processing: cmd-deps
 					return await changeDeps(pkgNames, rest.deps, rest.action);

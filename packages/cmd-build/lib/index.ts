@@ -1,6 +1,6 @@
 import { getPkgData } from "@siujs/core";
 
-import { SiuRollupBuilder } from "./builder/rollup";
+import { SiuRollupBuilder, SiuRollupBuildOption } from "./builder/rollup";
 import { Config } from "./config";
 import { asRollupPlugin, stopService } from "./esbuildService";
 
@@ -10,6 +10,8 @@ function transformConfig(config: Config) {
 			sourcemap: true,
 			loaders: {
 				".js": "js",
+				".mjs": "js",
+				".cjs": "js",
 				".ts": "ts"
 			}
 		}
@@ -22,7 +24,7 @@ function transformConfig(config: Config) {
  *
  * @param pkgs package name string, use comma to split
  */
-export async function simpleBuild(pkgs: string) {
+export async function simpleBuild(pkgs: string, opts?: SiuRollupBuildOption) {
 	const datas = pkgs.split(",").map(pkg => getPkgData(pkg));
 
 	for (let i = 0; i < datas.length; i++) {
@@ -30,7 +32,7 @@ export async function simpleBuild(pkgs: string) {
 			onConfigTransform: transformConfig
 		});
 
-		await builder.build();
+		await builder.build(opts);
 	}
 
 	stopService();
