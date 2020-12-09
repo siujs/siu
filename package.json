@@ -38,7 +38,6 @@
 		"@typescript-eslint/parser": "4.9.1",
 		"conventional-changelog-cli": "2.1.1",
 		"cross-env": "7.0.3",
-		"enquirer": "2.3.6",
 		"esbuild": "0.8.21",
 		"eslint": "7.15.0",
 		"eslint-config-prettier": "7.0.0",
