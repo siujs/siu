@@ -204,7 +204,7 @@ async function release(opts = {}, hooks = DEFAULT_HOOKS) {
 		!skipStep.includes("lint") && hooks.lint && (await hooks.lint(ctx2));
 		hooks.updateCrossDeps && (await hooks.updateCrossDeps(ctx2));
 		!skipStep.includes("build") && hooks.build && (await hooks.build(ctx2));
-		hooks.commitChanges && (await hooks.commitChanges(ctx2));
+		// hooks.commitChanges && (await hooks.commitChanges(ctx2));
 		hooks.publish && (await hooks.publish(ctx2));
 		!skipStep.includes("pushToGit") && hooks.pushToGit && (await hooks.pushToGit(ctx2));
 	} catch (ex) {
@@ -212,7 +212,11 @@ async function release(opts = {}, hooks = DEFAULT_HOOKS) {
 	}
 }
 
+import minimist from "minimist";
+
+const args = minimist(process.argv.slice(2));
+
 release({
-	publishRegistry: "https://registry.npmjs.org/",
-	skipStep: ["pushToGit"]
+	publishRegistry: args.registry || "https://registry.npmjs.org/",
+	skipStep: args.skipStep || []
 }).then(ex => console.log(ex));
