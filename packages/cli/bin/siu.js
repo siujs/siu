@@ -120,8 +120,9 @@ program
 
 program
 	.command("build [pkgs]")
+	.option("-f, --format <format>", "Output format: es、cjs、umd、umd-min")
 	.description("Build single of multiple monorepo's package")
-	.action(async pkgs => {
+	.action(async (pkgs, cmd) => {
 		const arr = findUnfoundPkgs(pkgs);
 
 		if (arr.length) {
@@ -129,7 +130,7 @@ program
 			return;
 		}
 
-		await runCmd("build", { pkgNames: pkgs });
+		await runCmd("build", { pkgNames: pkgs, format: cmd.format });
 	});
 
 program
