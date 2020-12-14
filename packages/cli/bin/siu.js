@@ -47,7 +47,7 @@ program
 
 program
 	.command("create <pkg>")
-	.option("-d, --deps <deps>", "dependencies of siblings package name, e.g. `pkg1` or `pkg1,pkg2`")
+	.option("-d, --deps <deps>", "name of siblings package, e.g. `pkg1` or `pkg1,pkg2`")
 	.description("Create monorepo's package")
 	.action(async (pkg, cmd) => {
 		validPkgName(pkg);
