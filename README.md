@@ -1,11 +1,13 @@
-# siu-cli
+# siu cli
 
-#### Introduction
-An cli tool to help you a little easier and faster, sounds like football moving: `siu...`
+#### Description
 
-TODO:
+Extensible front-end application scaffold, sounds like football moving: `siu...`
 
-* [ ] Scaffold of `node-lib`
+## Document
 
-* [ ] Scaffold of `vmfe`
+Docs area avaliable at
 
+## License
+
+[MIT](LICENSE)
