@@ -98,7 +98,7 @@ async function installDeps() {
 				if (code !== 0) {
 					reject(false);
 				}
-				resolve();
+				resolve(true);
 			});
 		});
 	});
