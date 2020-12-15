@@ -1,7 +1,7 @@
 import { getPkgData } from "@siujs/core";
 
 import { SiuRollupBuilder, SiuRollupBuildOption } from "./builder/rollup";
-import { Config } from "./config";
+import { Config } from "./config/rollup/Config";
 import { asRollupPlugin, stopService } from "./esbuildService";
 
 function transformConfig(config: Config) {
@@ -39,7 +39,10 @@ export async function simpleBuild(pkgs: string, opts?: SiuRollupBuildOption) {
 }
 
 export * from "./builder/rollup";
-export * from "./config";
+export * from "./config/Chainable";
+export * from "./config/ChainedMap";
+export * from "./config/ChainedSet";
+export * from "./config/rollup/Config";
 export * from "./dts";
 export * from "./esbuildService";
 export * from "./pkgData";

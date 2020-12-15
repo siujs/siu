@@ -1,6 +1,6 @@
 import { GlobalsOption, ModuleFormat, OptionsPaths, OutputOptions, PreRenderedAsset, PreRenderedChunk } from "rollup";
 
-import { ChainedMap } from "./ChainedMap";
+import { ChainedMap } from "../ChainedMap";
 import { Plugin } from "./Plugin";
 
 export interface Output<T> {

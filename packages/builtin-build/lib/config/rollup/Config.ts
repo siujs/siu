@@ -1,7 +1,7 @@
 import { InputOptions, OutputOptions, RollupOptions } from "rollup";
 
-import { ChainedMap } from "./ChainedMap";
-import { ChainedSet } from "./ChainedSet";
+import { ChainedMap } from "../ChainedMap";
+import { ChainedSet } from "../ChainedSet";
 import { Output, TOutputFormatKey } from "./Output";
 import { Plugin } from "./Plugin";
 
@@ -110,7 +110,4 @@ export class Config extends ChainedMap<void, any> {
 	}
 }
 
-export * from "./Chainable";
-export * from "./ChainedMap";
-export * from "./ChainedSet";
 export * from "./Output";

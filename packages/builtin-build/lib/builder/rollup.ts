@@ -13,8 +13,8 @@ import nodeResolve from "@rollup/plugin-node-resolve";
 import replace from "@rollup/plugin-replace";
 import { camelize } from "@siujs/utils";
 
-import { Config } from "../config";
-import { TOutputFormatKey } from "../config/Output";
+import { Config } from "../config/rollup/Config";
+import { TOutputFormatKey } from "../config/rollup/Output";
 import { PkgData } from "../pkgData";
 
 const FormatMap = {
