@@ -3,7 +3,7 @@ import path from "path";
 
 import { resolvePluginId } from "@siujs/utils";
 
-import { PluginCommand, SiuConfig, SiuConfigExcludePkgs } from "../types";
+import { PluginCommand, SiuConfig, SiuConfigExcludePkgs } from "./types";
 
 export function resolveSiuConfig(cwd: string) {
 	const configFile = path.resolve(cwd, "siu.config.js");
