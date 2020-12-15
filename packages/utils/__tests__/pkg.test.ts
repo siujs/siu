@@ -8,28 +8,28 @@ import {
 	getPkgData,
 	getPkgDirName,
 	getSortedPkgByPriority
-} from "../lib/utils";
+} from "../lib/pkg";
 
 let cwd = "";
 beforeAll(() => {
 	cwd = path.resolve(__dirname, "../../../");
 });
 
+const sortedPkgDirNames = [
+	"builtin-build",
+	"builtin-deps",
+	"builtin-githooks",
+	"builtin-publish",
+	"cli",
+	"cli-init",
+	"core",
+	"utils"
+];
+
 test("getPackageDirs", async done => {
 	const dirs = await getPackageDirs(cwd);
 
-	expect(JSON.stringify(dirs)).toBe(
-		JSON.stringify([
-			"cli",
-			"builtin-build",
-			"builtin-deps",
-			"builtin-githooks",
-			"cli-init",
-			"builtin-publish",
-			"core",
-			"utils"
-		])
-	);
+	expect(JSON.stringify(dirs)).toBe(JSON.stringify(sortedPkgDirNames));
 
 	done();
 });
@@ -37,20 +37,7 @@ test("getPackageDirs", async done => {
 test("getPackagePaths", async done => {
 	const dirs = await getPackagePaths(cwd);
 
-	expect(JSON.stringify(dirs)).toBe(
-		JSON.stringify(
-			[
-				"cli",
-				"builtin-build",
-				"builtin-deps",
-				"builtin-githooks",
-				"cli-init",
-				"builtin-publish",
-				"core",
-				"utils"
-			].map(it => path.resolve(cwd, "packages", it))
-		)
-	);
+	expect(JSON.stringify(dirs)).toBe(JSON.stringify(sortedPkgDirNames.map(it => path.resolve(cwd, "packages", it))));
 
 	done();
 });
@@ -108,11 +95,11 @@ test("getSortedPkgByPriority", async done => {
 		JSON.stringify([
 			"utils",
 			"core",
-			"builtin-publish",
 			"cli-init",
-			"builtin-githooks",
-			"builtin-deps",
 			"builtin-build",
+			"builtin-deps",
+			"builtin-githooks",
+			"builtin-publish",
 			"cli"
 		])
 	);
