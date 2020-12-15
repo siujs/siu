@@ -3,13 +3,15 @@ import fs from "fs-extra";
 import path from "path";
 import validProjectName from "validate-npm-package-name";
 
-import { simpleBuild } from "@siujs/builtin-build";
-import { changeDeps } from "@siujs/builtin-deps";
-import { lintWithGHooks } from "@siujs/builtin-githooks";
-import { release } from "@siujs/builtin-publish";
 import { initApp } from "@siujs/cli-init";
 import { applyPlugins, applyPluginsNoPkg, hasCommandHooks, PluginCommand } from "@siujs/core";
-import { getPackageDirs, getPkgDirName } from "@siujs/utils";
+import { getPkgDirName } from "@siujs/utils";
+
+import { asBuildFallback } from "./builtins/build";
+import { asCreationFallback } from "./builtins/create";
+import { asDepsFallback } from "./builtins/deps";
+import { asGLintFallback } from "./builtins/glint";
+import { asPublishFallback } from "./builtins/publish";
 
 interface CommonOptions {
 	pkgs?: string;
@@ -89,29 +91,20 @@ export async function runCmd<T extends CommonOptions>(cmd: PluginCommand | "init
 		return;
 	}
 
-	const { pkgNames, ...rest } = options || ({} as Record<string, any>);
-
 	try {
 		if (!hasCommandHooks(cmd)) {
 			switch (cmd) {
+				case "creation":
+					asCreationFallback();
 				case "build":
-					// invoke official processing: builtin-build
-					return await simpleBuild(pkgNames || (await getPackageDirs()).join(","), {
-						allowFormats: rest.format ? rest.format.split(",") : void 0
-					});
+					asBuildFallback();
 				case "deps":
-					// invoke official processing: builtin-deps
-					return await changeDeps(pkgNames, rest.deps, rest.action);
+					asDepsFallback();
 				case "glint":
-					// invoke official processing: builtin-githooks
-					return await lintWithGHooks(options.hook, process.cwd());
+					asGLintFallback();
 				case "publish":
-					// invoke official processing: builtin-publish
-					return await release();
+					asPublishFallback();
 			}
-
-			console.log(chalk.yellowBright(`[siu] Warning: Can't find any plugins to handle '${cmd}'`));
-			return;
 		}
 
 		cmd === "glint" || cmd === "deps" || cmd === "publish"
