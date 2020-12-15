@@ -32,7 +32,7 @@ export function transformDepStr(str: string) {
  *
  * @param deps deps string
  */
-export function analysisDepsStr(deps: string) {
+export function normalizeDepStr(deps: string) {
 	return deps.split(",").reduce(
 		(prev, cur) => {
 			if (cur.endsWith(":D")) {

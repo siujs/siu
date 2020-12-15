@@ -2,7 +2,7 @@ import shell from "shelljs";
 
 import { getPackagePath } from "@siujs/utils";
 
-import { addDeps, analysisDepsStr, detectYarn } from "./utils";
+import { addDeps, detectYarn, normalizeDepStr } from "./utils";
 
 /**
  *
@@ -21,7 +21,7 @@ import { addDeps, analysisDepsStr, detectYarn } from "./utils";
  * @param action `add` or `rm`
  */
 export async function changeDeps(pkg: string, depStr: string, action: "add" | "rm" = "add") {
-	const depsMap = analysisDepsStr(depStr);
+	const depsMap = normalizeDepStr(depStr);
 	if (!depsMap) return;
 
 	detectYarn();

@@ -1,6 +1,6 @@
 import path from "path";
 
-import { analysisDepsStr, getPkgMeta, isLocalPackage, transformDepStr } from "../lib/utils";
+import { getPkgMeta, isLocalPackage, normalizeDepStr, transformDepStr } from "../lib/utils";
 
 test(" transformDepStr ", () => {
 	let depsMap = transformDepStr("foo");
@@ -20,8 +20,8 @@ test(" transformDepStr ", () => {
 	expect(depsMap.version).toBe("1.1.1");
 });
 
-test(" analysisDepsStr ", () => {
-	const map = analysisDepsStr("foo,foo2:D,foo3@1.0.0,foo4@1.0.0:D");
+test(" normalizeDepStr ", () => {
+	const map = normalizeDepStr("foo,foo2:D,foo3@1.0.0,foo4@1.0.0:D");
 
 	expect(map).toHaveProperty("deps");
 	expect(map.deps.length).toBe(2);
