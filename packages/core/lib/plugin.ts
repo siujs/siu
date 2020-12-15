@@ -1,9 +1,8 @@
 import chalk from "chalk";
 
-import { deepFreezeObject } from "@siujs/utils";
+import { deepFreezeObject, getPkgData, PkgData } from "@siujs/utils";
 
-import { HookHandler, HookHandlerContext, PkgData, PluginCommand, PluginCommandLifecycle } from "./types";
-import { getPkgData } from "./utils";
+import { HookHandler, HookHandlerContext, PluginCommand, PluginCommandLifecycle } from "./types";
 
 const pluginCommands = ["creation", "glint", "genDocs", "test", "build", "publish"] as PluginCommand[];
 

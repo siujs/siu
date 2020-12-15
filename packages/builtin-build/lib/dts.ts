@@ -3,7 +3,7 @@ import fs from "fs-extra";
 import path from "path";
 import shell from "shelljs";
 
-import { PkgData } from "./pkgData";
+import { PkgData } from "@siujs/utils";
 
 /**
  *

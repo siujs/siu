@@ -28,6 +28,7 @@
 	},
 	"homepage": "https://github.com/siujs/siu#readme",
 	"dependencies": {
+		"@siujs/core": "file:../core",
 		"@siujs/utils": "file:../utils",
 		"fs-extra": "^9.0.1",
 		"shelljs": "^0.8.4"

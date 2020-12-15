@@ -1,9 +1,7 @@
 import fs from "fs-extra";
 import path from "path";
 
-import { camelize } from "@siujs/utils";
-
-import { PkgData } from "./types";
+import { camelize } from "./str";
 
 /**
  *
@@ -60,6 +58,54 @@ export function getPkgDirName(pkgName: string) {
 		dirName = dirName.split("/").pop();
 	}
 	return dirName;
+}
+
+/**
+ *
+ * 获取当前工作目录下的所有有效package的地址
+ *
+ * @param pkgName 客户端传入的pkg名称
+ * @param cwd 当前工作目录 默认process.cwd()
+ */
+export function getPackagePath(pkgName: string, cwd = process.cwd()) {
+	const pkgsRoot = path.resolve(cwd, "./packages");
+	const dir = getPkgDirName(pkgName);
+	return path.resolve(pkgsRoot, dir);
+}
+
+export interface PkgData {
+	/**
+	 * full name of package, equlas `name` in package.json
+	 */
+	name: string;
+	/**
+	 * directory name of package
+	 */
+	dirName: string;
+	/**
+	 * output name for umd format file
+	 */
+	umdName: string;
+	/**
+	 * absolute address of package
+	 */
+	path: string;
+	/**
+	 * absolute address of package's package.json
+	 */
+	metaPath: string;
+	/**
+	 * data of package's package.json
+	 */
+	meta?: Record<string, any>;
+	/**
+	 * absolute address of packages
+	 */
+	pkgsRoot: string;
+	/**
+	 * absolute address of current workspace
+	 */
+	root: string;
 }
 
 /**

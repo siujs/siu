@@ -8,14 +8,8 @@ import { changeDeps } from "@siujs/builtin-deps";
 import { lintWithGHooks } from "@siujs/builtin-githooks";
 import { release } from "@siujs/builtin-publish";
 import { initApp } from "@siujs/cli-init";
-import {
-	applyPlugins,
-	applyPluginsNoPkg,
-	getPackageDirs,
-	getPkgDirName,
-	hasCommandHooks,
-	PluginCommand
-} from "@siujs/core";
+import { applyPlugins, applyPluginsNoPkg, hasCommandHooks, PluginCommand } from "@siujs/core";
+import { getPackageDirs, getPkgDirName } from "@siujs/utils";
 
 interface CommonOptions {
 	pkgs?: string;

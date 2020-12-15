@@ -1,6 +1,8 @@
 import shell from "shelljs";
 
-import { addDeps, analysisDepsStr, detectYarn, getPkgPath } from "./utils";
+import { getPackagePath } from "@siujs/utils";
+
+import { addDeps, analysisDepsStr, detectYarn } from "./utils";
 
 /**
  *
@@ -24,7 +26,7 @@ export async function changeDeps(pkg: string, depStr: string, action: "add" | "r
 
 	detectYarn();
 
-	const cwd = pkg ? getPkgPath(pkg) : process.cwd();
+	const cwd = pkg ? await getPackagePath(pkg) : process.cwd();
 
 	const { deps = [], devDeps = [] } = depsMap;
 

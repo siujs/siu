@@ -2,7 +2,7 @@ import fs from "fs-extra";
 import path from "path";
 import shell from "shelljs";
 
-import { isWindows } from "@siujs/utils";
+import { getPackagePath, isWindows } from "@siujs/utils";
 
 /* istanbul ignore next */
 export function detectYarn() {
@@ -51,13 +51,8 @@ export function analysisDepsStr(deps: string) {
 	);
 }
 
-export function getPkgPath(pkgName: string) {
-	const pkgDirName = pkgName.split("/").pop();
-	return path.resolve(process.cwd(), "packages", pkgDirName);
-}
-
 export async function getPkgMeta(pkgName: string) {
-	const meta = await fs.readJSON(path.resolve(getPkgPath(pkgName), "package.json"));
+	const meta = await fs.readJSON(path.resolve(getPackagePath(pkgName), "package.json"));
 
 	meta.dependencies = meta.dependencies || {};
 	meta.devDependencies = meta.devDependencies || {};

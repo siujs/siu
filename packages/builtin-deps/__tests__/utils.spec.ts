@@ -1,6 +1,6 @@
 import path from "path";
 
-import { analysisDepsStr, getPkgMeta, getPkgPath, isLocalPackage, transformDepStr } from "../lib/utils";
+import { analysisDepsStr, getPkgMeta, isLocalPackage, transformDepStr } from "../lib/utils";
 
 test(" transformDepStr ", () => {
 	let depsMap = transformDepStr("foo");
@@ -52,12 +52,6 @@ test(" isLocalPackage ", async done => {
 
 	done();
 });
-
-test(" getPkgPath ", () => {
-	process.chdir(path.resolve(__dirname, "../../../"));
-	expect(getPkgPath("builtin-deps")).toBe(path.resolve(process.cwd(), "packages", "builtin-deps"));
-});
-
 test(" getPkgMeta ", async done => {
 	process.chdir(path.resolve(__dirname, "../../../"));
 

@@ -1,7 +1,14 @@
-import { getSiuConfiger } from "./config/siu";
+import {
+	findUpSiuConfigCwd,
+	getMetasOfPackages,
+	getPackageDirs,
+	getPkgDirName,
+	getSortedPkgByPriority
+} from "@siujs/utils";
+
+import { getSiuConfiger } from "./config";
 import { getPlugin, getPlugins, SiuPlugin } from "./plugin";
 import { HookHandler, PluginCommand, PluginCommandLifecycle } from "./types";
-import { findUpSiuConfigCwd, getMetasOfPackages, getPackageDirs, getPkgDirName, getSortedPkgByPriority } from "./utils";
 
 /**
  *
@@ -135,4 +142,3 @@ export async function applyPlugins(
 }
 
 export * from "./types";
-export * from "./utils";
