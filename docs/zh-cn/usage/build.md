@@ -9,9 +9,9 @@
   -f, --format <format>  可输出的打包类型： `es`、`cjs`、`umd`、`umd-min`
 ```
 
-`siu build`此命令会优先从`siu.config.js`中去找到对应具备`build`hook 的插件并执行, 如果没有的话则默认走`@siujs/cmd-build`的逻辑去处理;
+`siu build`此命令会优先从`siu.config.js`中去找到对应具备`build`hook 的插件并执行, 如果没有的话则默认走`@siujs/builtin-build`的逻辑去处理;
 
-`@siujs/cmd-build`除了作为`siu build`的垫片, 还提供了关于自定义`rollup`、`webpack`配置的构建器，主要服务于 siu 插件开发
+`@siujs/builtin-build`除了作为`siu build`的垫片, 还提供了关于自定义`rollup`、`webpack`配置的构建器，主要服务于 siu 插件开发
 
 **`Note`**
 

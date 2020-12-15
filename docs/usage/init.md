@@ -2,7 +2,7 @@
 
 > initialize application
 
-> dependens on `@siujs/cmd-init`
+> dependens on `@siujs/cli-init`
 
 ```js
 Usage: siu init [options] <template> <app>

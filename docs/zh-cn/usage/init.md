@@ -2,7 +2,7 @@
 
 > 初始化应用程序
 
-> 依赖于`@siujs/cmd-init`
+> 依赖于`@siujs/cli-init`
 
 ```bash
 用法: siu init [options] <template> <app>

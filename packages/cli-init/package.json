@@ -1,0 +1,40 @@
+{
+	"name": "@siujs/cli-init",
+	"version": "0.0.0",
+	"description": "init application of siujs",
+	"keywords": [
+		"init",
+		"siujs"
+	],
+	"author": "buns <kuafujs@126.com>",
+	"license": "MIT",
+	"main": "dist/index.js",
+	"module": "dist/index.mjs",
+	"types": "dist/cli-init.d.ts",
+	"typings": "dist/cli-init.d.ts",
+	"directories": {
+		"lib": "lib",
+		"test": "__tests__"
+	},
+	"files": [
+		"dist"
+	],
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/siujs/siu.git"
+	},
+	"bugs": {
+		"url": "https://github.com/siujs/siu/issues"
+	},
+	"homepage": "https://github.com/siujs/siu#readme",
+	"dependencies": {
+		"@siujs/utils": "file:../utils",
+		"chalk": "^4.1.0",
+		"fs-extra": "^9.0.1",
+		"pretty-ms": "^7.0.1",
+		"shelljs": "^0.8.4"
+	},
+	"devDependencies": {
+		"@types/fs-extra": "^9.0.5"
+	}
+}

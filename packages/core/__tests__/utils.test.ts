@@ -19,7 +19,16 @@ test("getPackageDirs", async done => {
 	const dirs = await getPackageDirs(cwd);
 
 	expect(JSON.stringify(dirs)).toBe(
-		JSON.stringify(["cli", "cmd-build", "cmd-deps", "cmd-glint", "cmd-init", "cmd-publish", "core", "utils"])
+		JSON.stringify([
+			"cli",
+			"builtin-build",
+			"builtin-deps",
+			"builtin-githooks",
+			"cli-init",
+			"builtin-publish",
+			"core",
+			"utils"
+		])
 	);
 
 	done();
@@ -30,9 +39,16 @@ test("getPackagePaths", async done => {
 
 	expect(JSON.stringify(dirs)).toBe(
 		JSON.stringify(
-			["cli", "cmd-build", "cmd-deps", "cmd-glint", "cmd-init", "cmd-publish", "core", "utils"].map(it =>
-				path.resolve(cwd, "packages", it)
-			)
+			[
+				"cli",
+				"builtin-build",
+				"builtin-deps",
+				"builtin-githooks",
+				"cli-init",
+				"builtin-publish",
+				"core",
+				"utils"
+			].map(it => path.resolve(cwd, "packages", it))
 		)
 	);
 
@@ -50,11 +66,11 @@ test("getMetasOfPackages", async done => {
 
 	expect(!!metas).toBe(true);
 
-	expect(metas).toHaveProperty("cmd-build");
-	expect(metas).toHaveProperty("cmd-deps");
-	expect(metas).toHaveProperty("cmd-glint");
-	expect(metas).toHaveProperty("cmd-init");
-	expect(metas).toHaveProperty("cmd-publish");
+	expect(metas).toHaveProperty("builtin-build");
+	expect(metas).toHaveProperty("builtin-deps");
+	expect(metas).toHaveProperty("builtin-githooks");
+	expect(metas).toHaveProperty("cli-init");
+	expect(metas).toHaveProperty("builtin-publish");
 	expect(metas).toHaveProperty("core");
 	expect(metas).toHaveProperty("cli");
 	expect(metas).toHaveProperty("utils");
@@ -89,7 +105,16 @@ test("getSortedPkgByPriority", async done => {
 	const sortedPkgs = await getSortedPkgByPriority(cwd);
 
 	expect(JSON.stringify(sortedPkgs)).toBe(
-		JSON.stringify(["utils", "core", "cmd-publish", "cmd-init", "cmd-glint", "cmd-deps", "cmd-build", "cli"])
+		JSON.stringify([
+			"utils",
+			"core",
+			"builtin-publish",
+			"cli-init",
+			"builtin-githooks",
+			"builtin-deps",
+			"builtin-build",
+			"cli"
+		])
 	);
 
 	done();

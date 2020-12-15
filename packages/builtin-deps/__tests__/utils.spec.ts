@@ -42,12 +42,12 @@ test(" analysisDepsStr ", () => {
 test(" isLocalPackage ", async done => {
 	process.chdir(path.resolve(__dirname, "../../../"));
 
-	const depsVersion = require(path.resolve(process.cwd(), "packages", "cmd-deps", "package.json")).version;
+	const depsVersion = require(path.resolve(process.cwd(), "packages", "builtin-deps", "package.json")).version;
 
-	let version = await isLocalPackage("@siujs/cmd-deps");
+	let version = await isLocalPackage("@siujs/builtin-deps");
 	expect(version).toBe(depsVersion);
 
-	version = await isLocalPackage("@siujs/cmd-deps2");
+	version = await isLocalPackage("@siujs/builtin-deps2");
 	expect(version).toBe("");
 
 	done();
@@ -55,16 +55,16 @@ test(" isLocalPackage ", async done => {
 
 test(" getPkgPath ", () => {
 	process.chdir(path.resolve(__dirname, "../../../"));
-	expect(getPkgPath("cmd-deps")).toBe(path.resolve(process.cwd(), "packages", "cmd-deps"));
+	expect(getPkgPath("builtin-deps")).toBe(path.resolve(process.cwd(), "packages", "builtin-deps"));
 });
 
 test(" getPkgMeta ", async done => {
 	process.chdir(path.resolve(__dirname, "../../../"));
 
-	const meta = await getPkgMeta("cmd-deps");
+	const meta = await getPkgMeta("builtin-deps");
 
 	expect(meta).toHaveProperty("name");
-	expect(meta.name).toBe("@siujs/cmd-deps");
+	expect(meta.name).toBe("@siujs/builtin-deps");
 
 	done();
 });

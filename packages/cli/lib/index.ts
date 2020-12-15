@@ -3,11 +3,11 @@ import fs from "fs-extra";
 import path from "path";
 import validProjectName from "validate-npm-package-name";
 
-import { simpleBuild } from "@siujs/cmd-build";
-import { changeDeps } from "@siujs/cmd-deps";
-import { lintWithGHooks } from "@siujs/cmd-glint";
-import { initApp } from "@siujs/cmd-init";
-import { release } from "@siujs/cmd-publish";
+import { simpleBuild } from "@siujs/builtin-build";
+import { changeDeps } from "@siujs/builtin-deps";
+import { lintWithGHooks } from "@siujs/builtin-githooks";
+import { release } from "@siujs/builtin-publish";
+import { initApp } from "@siujs/cli-init";
 import {
 	applyPlugins,
 	applyPluginsNoPkg,
@@ -101,18 +101,18 @@ export async function runCmd<T extends CommonOptions>(cmd: PluginCommand | "init
 		if (!hasCommandHooks(cmd)) {
 			switch (cmd) {
 				case "build":
-					// invoke official processing: cmd-build
+					// invoke official processing: builtin-build
 					return await simpleBuild(pkgNames || (await getPackageDirs()).join(","), {
 						allowFormats: rest.format ? rest.format.split(",") : void 0
 					});
 				case "deps":
-					// invoke official processing: cmd-deps
+					// invoke official processing: builtin-deps
 					return await changeDeps(pkgNames, rest.deps, rest.action);
 				case "glint":
-					// invoke official processing: cmd-glint
+					// invoke official processing: builtin-githooks
 					return await lintWithGHooks(options.hook, process.cwd());
 				case "publish":
-					// invoke official processing: cmd-publish
+					// invoke official processing: builtin-publish
 					return await release();
 			}
 
