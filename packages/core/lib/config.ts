@@ -78,7 +78,7 @@ export class SiuConfiger {
 	}
 
 	currentPlugId() {
-		return this._currentPluginId;
+		return this._currentPluginId || "__SIU_BUILTIN__";
 	}
 
 	resolvePlugins() {
