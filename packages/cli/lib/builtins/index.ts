@@ -22,13 +22,18 @@ export function loadFallback(cmd: PluginCommand) {
 	switch (cmd) {
 		case "create":
 			asCreationFallback();
+			break;
 		case "build":
 			asBuildFallback();
+			break;
 		case "deps":
 			asDepsFallback();
+			break;
 		case "glint":
 			asGLintFallback();
+			break;
 		case "publish":
 			asPublishFallback();
+			break;
 	}
 }
