@@ -89,8 +89,10 @@ export class SiuConfiger {
 		if (!plugins || !plugins.length) return;
 
 		try {
+			const nmPath = path.resolve(process.cwd(), "node_modules");
+
 			plugins.forEach(plug => {
-				require((this._currentPluginId = Array.isArray(plug) ? plug[0] : plug));
+				require(path.resolve(nmPath, (this._currentPluginId = Array.isArray(plug) ? plug[0] : plug)));
 			});
 			this._currentPluginId = "";
 			this.isResolved = true;
