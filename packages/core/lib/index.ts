@@ -1,14 +1,9 @@
-import {
-	findUpSiuConfigCwd,
-	getMetasOfPackages,
-	getPackageDirs,
-	getPkgDirName,
-	getSortedPkgByPriority
-} from "@siujs/utils";
+import { getMetasOfPackages, getPackageDirs, getPkgDirName, getSortedPkgByPriority } from "@siujs/utils";
 
 import { getSiuConfiger } from "./config";
 import { getPlugin, getPlugins, SiuPlugin } from "./plugin";
-import { HookHandler, PluginCommand, PluginCommandLifecycle } from "./types";
+import { CommandOptionsHandlerParams, PluginApi, PluginCommand } from "./types";
+import { adjustCWD } from "./utils";
 
 /**
  *
@@ -16,66 +11,79 @@ import { HookHandler, PluginCommand, PluginCommandLifecycle } from "./types";
  *
  * @param opts 插件的默认参数
  */
-export function plugin(
-	opts?: Record<string, any>
-): Record<PluginCommand, Record<PluginCommandLifecycle, (fn: HookHandler) => void>> {
+export function plugin(opts?: Record<string, any>): PluginApi {
 	const id = getSiuConfiger().currentPlugId();
-	return getPlugin(id).refreshOpts(opts).output();
+	const plug = getPlugin(id);
+	opts && plug.refreshOpts(opts);
+	return plug.output();
 }
 
 /**
- *
- * has command hooks in current plugin
- *
- * @param cmd target command
+ * 加载插件
  */
-export function hasCommandHooks(cmd: PluginCommand) {
-	const plugs = getPlugins();
-
-	return plugs.reduce((prev, cur) => prev || cur.hasCommandHooks(cmd), false);
-}
-
-/**
- *
- * adjust current workspace directory
- *
- */
-export async function adjustCWD() {
-	const siuConfigCWD = await findUpSiuConfigCwd();
-
-	if (!siuConfigCWD) {
-		throw new Error(`[siu] ERROR: Cant't find root workspace directory of \`siu.config.js\``);
-	}
-
-	process.chdir(siuConfigCWD);
-}
-
-/**
- *
- * apply plugins without package
- *
- * @param cmd client command
- * @param opts options of current client command
- */
-export async function applyPluginsNoPkg(cmd: PluginCommand, opts: { [x: string]: any }) {
+export async function loadPlugins() {
 	await adjustCWD();
 
 	getSiuConfiger().resolvePlugins();
 
 	const plugs = getPlugins();
 
+	if (!plugs || !plugs.length) return;
+
+	return plugs;
+}
+
+/**
+ *
+ * 判断当前插件是否存在对应命令的处理
+ *
+ * @param cmd target command
+ */
+export function hasHooks(cmd: PluginCommand) {
+	return getPlugins().reduce((prev, cur) => prev || cur.hasHooks(cmd), false);
+}
+
+/**
+ *
+ * apply plugins with commander options initialize
+ *
+ * @param cmd client command
+ * @param command `Command` instance
+ */
+export async function applyPluginCommandOptions(cmd: PluginCommand, command: CommandOptionsHandlerParams) {
+	const plugs = await loadPlugins();
+
+	if (!plugs) return;
+
+	await Promise.all(getPlugins().map(plug => plug.processCommandOptions(cmd, command)));
+}
+
+/**
+ *
+ * apply plugins without package
+ *
+ *  tips: only for `glint` and `deps`
+ *
+ * @param cmd client command
+ * @param opts options of current client command
+ */
+export async function applyPluginsNoPkg(cmd: PluginCommand, opts: { [x: string]: any }) {
+	const plugs = await loadPlugins();
+
+	if (!plugs) return;
+
 	for (let i = 0; i < plugs.length; i++) {
 		await plugs[i].process(cmd, opts);
 	}
 
 	await Promise.all(plugs.map(plug => plug.clean()));
-
-	return;
 }
 
 /**
  *
  * apply plugins with package
+ *
+ *  tips: not for `glint` and `deps`
  *
  * @param cmd client command
  * @param opts options of current client command
@@ -83,17 +91,17 @@ export async function applyPluginsNoPkg(cmd: PluginCommand, opts: { [x: string]:
 export async function applyPlugins(
 	cmd: PluginCommand,
 	opts: {
-		pkgNames?: string;
+		pkg?: string;
 		[x: string]: any;
 	}
 ) {
-	await adjustCWD();
+	const plugs = await loadPlugins();
 
-	const configer = getSiuConfiger().resolvePlugins();
+	if (!plugs) return;
 
-	const plugs = getPlugins();
+	const configer = getSiuConfiger();
 
-	const { pkgNames, ...options } = opts;
+	const { pkg, ...options } = opts;
 
 	const pkgsOrder = configer.get("pkgsOrder") || "priority";
 
@@ -101,8 +109,8 @@ export async function applyPlugins(
 
 	const pkgMetas = await getMetasOfPackages();
 
-	if (cmd === "creation" && pkgNames) {
-		pkgNames.split(",").forEach(pkg => {
+	if (cmd === "create" && pkg) {
+		pkg.split(",").forEach(pkg => {
 			pkgDirList.push(getPkgDirName(pkg));
 			pkgMetas[pkgDirList[pkgDirList.length - 1]] = { name: pkg };
 		});
@@ -115,8 +123,8 @@ export async function applyPlugins(
 			pkgDirList = pkgsOrder as string[];
 		}
 
-		if (pkgNames) {
-			const pkgs = pkgNames.split(",").map(getPkgDirName);
+		if (pkg) {
+			const pkgs = pkg.split(",").map(getPkgDirName);
 			pkgDirList = pkgDirList.filter(dir => pkgs.includes(dir));
 		}
 	}

@@ -195,3 +195,41 @@ export async function findUpSiuConfigCwd(cwd = process.cwd(), deep = 3): Promise
 
 	return cwd;
 }
+
+/**
+ *
+ * Whether package is exists
+ *
+ * @param name package name
+ */
+export async function isPkgExists(name: string) {
+	const dirName = getPkgDirName(name);
+
+	const pkgs = await fs.readdir(path.resolve(process.cwd(), "packages"));
+
+	return pkgs.includes(dirName);
+}
+
+/**
+ *
+ * Filter packages which isn't exists
+ *
+ * @param name packages name string
+ */
+export async function filterUnExistsPkgs(pkgs: string) {
+	const unExistsPkgs = [] as string[];
+
+	if (!pkgs) return unExistsPkgs;
+
+	const arr = pkgs.split(",");
+	let exists: boolean;
+
+	for (let l = arr.length; l--; ) {
+		exists = await isPkgExists(arr[l]);
+		if (!exists) {
+			unExistsPkgs.push(arr[l]);
+		}
+	}
+
+	return unExistsPkgs;
+}

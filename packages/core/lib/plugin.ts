@@ -1,28 +1,28 @@
 import chalk from "chalk";
 
-import { deepFreezeObject, getPkgData, PkgData } from "@siujs/utils";
+import { deepFreezeObject, getPkgData } from "@siujs/utils";
 
-import { HookHandler, HookHandlerContext, PluginCommand, PluginCommandLifecycle } from "./types";
-
-const pluginCommands = ["creation", "glint", "genDocs", "test", "build", "publish"] as PluginCommand[];
-
-const lifecycles = ["start", "process", "complete", "error", "clean"] as PluginCommandLifecycle[];
-
-const GlobalKeyValues = {} as Record<string, any>;
-
-const PkgCaches = {} as Record<string, PkgData>;
-
-function getHookId(action: PluginCommand, lifeCycle: PluginCommandLifecycle) {
-	return `${action}.${lifeCycle}`;
-}
-
-const noop = () => {};
+import { GlobalKeyValues, lifecycles, noop, PkgCaches, pluginCommands } from "./consts";
+import {
+	CommandOptionsHandler,
+	CommandOptionsHandlerParams,
+	HookHandler,
+	HookHandlerContext,
+	HookHandlerFunc,
+	ParamTypeOf,
+	PluginApi,
+	PluginCommand,
+	PluginCommandLifecycle,
+	PluginHookKey,
+	ValueOf
+} from "./types";
+import { getHookId } from "./utils";
 
 export class SiuPlugin {
 	private readonly _id: string;
 	private readonly _cacheKeyPrefix: string;
-	private readonly hooks: Partial<Record<string, HookHandler[]>>;
-	private readonly _output: Record<PluginCommand, Record<PluginCommandLifecycle, (fn: HookHandler) => void>>;
+	private readonly hooks: Partial<Record<PluginHookKey, ParamTypeOf<HookHandlerFunc>[]>>;
+	private readonly _output: PluginApi;
 	private readonly _ctx: HookHandlerContext;
 
 	private _opts: Record<string, any> = {};
@@ -53,16 +53,18 @@ export class SiuPlugin {
 
 	private initOutputApi() {
 		const addHook = this.addHook.bind(this);
+		const addCommandOptions = this.addCommandOptions.bind(this);
 
 		const kv = pluginCommands.reduce((prev, cmd) => {
 			prev[cmd] = lifecycles.reduce((kv, cur) => {
-				kv[cur] = (fn: HookHandler) => {
-					addHook(cmd, cur, fn);
-				};
+				kv[cur] =
+					cur === "initCmdOpts"
+						? (fn: CommandOptionsHandler) => addCommandOptions(cmd, fn)
+						: (fn: HookHandler) => addHook(cmd, cur, fn);
 				return kv;
-			}, {} as Record<PluginCommandLifecycle, (fn: HookHandler) => void>);
+			}, {} as ValueOf<PluginApi>);
 			return prev;
-		}, {} as Record<PluginCommand, Record<PluginCommandLifecycle, (fn: HookHandler) => void>>);
+		}, {} as PluginApi);
 
 		deepFreezeObject(kv);
 
@@ -107,11 +109,25 @@ export class SiuPlugin {
 	 *
 	 * 新增插件hook
 	 *
-	 * @param hookName hook名称
+	 * @param action 操作名称
+	 * @param lifeCycle 操作执行周期
 	 * @param hookHandler hook处理器
 	 */
 	private addHook(action: PluginCommand, lifeCycle: PluginCommandLifecycle, hookHandler: HookHandler) {
 		const hookId = getHookId(action, lifeCycle);
+		this.hooks[hookId] = this.hooks[hookId] || [];
+		this.hooks[hookId].push(hookHandler);
+	}
+
+	/**
+	 *
+	 * 新增插件关于命令选项初始化的hook
+	 *
+	 * @param action 操作名称
+	 * @param hookHandler hook处理器
+	 */
+	private addCommandOptions(action: PluginCommand, hookHandler: CommandOptionsHandler) {
+		const hookId = getHookId(action, "initCmdOpts");
 		this.hooks[hookId] = this.hooks[hookId] || [];
 		this.hooks[hookId].push(hookHandler);
 	}
@@ -123,12 +139,8 @@ export class SiuPlugin {
 	 * @private
 	 * @param hookKey target hook key
 	 */
-	private hasHook(hookKey: string) {
+	private hasHook(hookKey: PluginHookKey) {
 		return this.hooks[hookKey] && !!this.hooks[hookKey].length;
-	}
-
-	private hasTargetHooks(cmd: PluginCommand) {
-		return this.hasHook(getHookId(cmd, "start")) || this.hasHook(getHookId(cmd, "process"));
 	}
 
 	/**
@@ -165,6 +177,12 @@ export class SiuPlugin {
 		return this.scopedKeys("SIU_PLUGIN_CATCH_ERR", value);
 	}
 
+	/**
+	 *
+	 * 获取/设置当前package的元数据信息
+	 *
+	 * @param meta [可选] 新的元数据信息
+	 */
 	private pkg(meta?: Record<string, any>) {
 		if (meta) {
 			if (!this._currentPkg) return;
@@ -182,7 +200,12 @@ export class SiuPlugin {
 			? PkgCaches[this._currentPkg] || (PkgCaches[this._currentPkg] = getPkgData(this._currentPkg, process.cwd()))
 			: null;
 	}
-
+	/**
+	 *
+	 * 自主控制流程的流转方向,是向下执行还是直接走到异常环节
+	 *
+	 * @param err [可选] 异常信息
+	 */
 	private async next(err?: Error) {
 		if (err) {
 			this.ex(err);
@@ -195,8 +218,13 @@ export class SiuPlugin {
 			return this.callHook(getHookId(this.cmd, (this.lifecycle = "complete")));
 		}
 	}
-
-	private async callHook(hookKey: string) {
+	/**
+	 *
+	 * 执行插件的Handlers
+	 *
+	 * @param hookKey 插件Key
+	 */
+	private async callHook(hookKey: PluginHookKey) {
 		const handlers = this.hooks[hookKey] as HookHandler[];
 
 		if (!handlers || !handlers.length) return;
@@ -210,7 +238,9 @@ export class SiuPlugin {
 			await handlers[i](this._ctx, next);
 		}
 	}
-
+	/**
+	 * 清除当前插件的临时存储
+	 */
 	private cleanKeys() {
 		Object.keys(GlobalKeyValues)
 			.filter(key => key.startsWith(this._cacheKeyPrefix))
@@ -219,6 +249,12 @@ export class SiuPlugin {
 			});
 	}
 
+	/**
+	 *
+	 * 对外提供主动唤起清理动作的接口
+	 *
+	 * @param pkg [可选] package名称
+	 */
 	async clean(pkg?: string) {
 		this._currentPkg = pkg;
 
@@ -229,16 +265,32 @@ export class SiuPlugin {
 
 	/**
 	 *
-	 * has command hooks in current plugin
+	 * 判断当前插件是否存在对应命令的处理
 	 *
 	 * @param cmd target command
 	 */
-	hasCommandHooks(cmd: PluginCommand) {
+	hasHooks(cmd: PluginCommand) {
 		return lifecycles.reduce((prev, cur) => prev && this.hasHook(getHookId(cmd, cur)), true);
 	}
 
+	async processCommandOptions(cmd: PluginCommand, command: CommandOptionsHandlerParams) {
+		const hookKey = getHookId(cmd, "initCmdOpts");
+
+		const hasHook = this.hasHook(hookKey);
+
+		if (!hasHook) return;
+
+		const handlers = this.hooks[hookKey] as CommandOptionsHandler[];
+
+		if (!handlers || !handlers.length) return;
+
+		for (let i = 0; i < handlers.length; i++) {
+			await handlers[i](command);
+		}
+	}
+
 	async process(cmd: PluginCommand, cmdOpts: Record<string, any>, pkgName?: string) {
-		if (!this.hasTargetHooks(cmd)) return;
+		if (!this.hasHook(getHookId(cmd, "start")) && !this.hasHook(getHookId(cmd, "process"))) return;
 
 		this.cmd = cmd;
 

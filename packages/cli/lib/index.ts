@@ -1,17 +1,19 @@
 import chalk from "chalk";
-import fs from "fs-extra";
-import path from "path";
+import program from "commander";
 import validProjectName from "validate-npm-package-name";
 
 import { initApp } from "@siujs/cli-init";
-import { applyPlugins, applyPluginsNoPkg, hasCommandHooks, PluginCommand } from "@siujs/core";
-import { getPkgDirName } from "@siujs/utils";
+import {
+	applyPluginCommandOptions,
+	applyPlugins,
+	applyPluginsNoPkg,
+	hasHooks,
+	loadPlugins,
+	PluginCommand
+} from "@siujs/core";
+import { filterUnExistsPkgs, isPkgExists } from "@siujs/utils";
 
-import { asBuildFallback } from "./builtins/build";
-import { asCreationFallback } from "./builtins/create";
-import { asDepsFallback } from "./builtins/deps";
-import { asGLintFallback } from "./builtins/glint";
-import { asPublishFallback } from "./builtins/publish";
+import { loadDefaultCommander, loadFallback } from "./builtins";
 
 interface CommonOptions {
 	pkgs?: string;
@@ -46,36 +48,95 @@ export function validPkgName(name: string) {
 	}
 }
 
-/**
- *
- * package is exists
- *
- * @param name package name
- */
-export async function isPkgExists(name: string) {
-	const dirName = getPkgDirName(name);
+const handleWithPkgAction = async (pkg: string, cmd: any, cmdText: PluginCommand) => {
+	const arr = await filterUnExistsPkgs(pkg);
+	if (arr.length) {
+		console.log(chalk.red.bold(`[siu] ERROR: \`${arr.join(",")}\` does not exists!`));
+		return;
+	}
+	await runCmd(cmdText, { pkg, ...cmd.opts() });
+};
 
-	const pkgs = await fs.readdir(path.resolve(process.cwd(), "packages"));
+const DEFAULT_COMMAND = {
+	create: program
+		.command("create <pkg>")
+		.description("Create monorepo's package")
+		.action(async (pkg, cmd) => {
+			validPkgName(pkg);
+			const exists = await isPkgExists(pkg);
+			if (exists) {
+				console.log(chalk.red.bold(`[siu] ERROR: \`${pkg}\` already exists! `));
+				return;
+			}
+			await runCmd("create", { pkg, ...cmd.opts() });
+		}),
+	deps: program
+		.command("deps <deps>")
+		.option("-p, --pkg <pkg>", "target package name,e.g. foo、@foo/bar")
+		.option("-r, --rm", "is remove deps from package")
+		.description("Add deps to target monorepo's package, e.g. add foo,foo@1.2.2,foo:D,foo@1.2.2:D ")
+		.action(async (deps, cmd) => {
+			if (cmd.pkg) {
+				validPkgName(cmd.pkg);
+				const exists = await isPkgExists(cmd.target);
+				if (!exists) {
+					console.log(chalk.red.bold(`[siu] ERROR: \`${cmd.target}\` does not exists! `));
+					return;
+				}
+			}
+			if (!deps) return;
+			await runCmd("deps", {
+				deps,
+				pkg: cmd.pkg,
+				action: cmd.rm ? "rm" : "add",
+				...cmd.opts()
+			});
+		}),
+	glint: program
+		.command("glint")
+		.description("Lint for git action")
+		.option(
+			"-h, --hook <hook>",
+			"Git lifecycle hook: pre-commit、prepare-commit-msg、commit-msg、post-commit、post-merge"
+		)
+		.action(async cmd => {
+			await runCmd("glint", cmd.opts());
+		}),
+	test: program
+		.command("test [pkg]")
+		.description("Test single of multiple monorepo's package")
+		.action(async (pkg, cmd) => handleWithPkgAction(pkg, cmd, "test")),
+	doc: program
+		.command("doc [pkg]")
+		.description("Generate docs of target monorepo's package")
+		.action(async (pkg, cmd) => handleWithPkgAction(pkg, cmd, "doc")),
+	build: program
+		.command("build [pkg]")
+		.description("Build single of multiple monorepo's package")
+		.action(async (pkg, cmd) => handleWithPkgAction(pkg, cmd, "build")),
+	publish: program
+		.command("publish [pkg]")
+		.description("publish single of multiple monorepo's package")
+		.action(async (pkg, cmd) => handleWithPkgAction(pkg, cmd, "publish"))
+};
 
-	return pkgs.includes(dirName);
-}
+export async function initCommanders() {
+	const plugs = await loadPlugins();
 
-export async function findUnfoundPkgs(pkgs: string) {
-	const unfoundPkgs = [] as string[];
-
-	if (!pkgs) return unfoundPkgs;
-
-	const arr = pkgs.split(",");
-	let exists: boolean;
-
-	for (let l = arr.length; l--; ) {
-		exists = await isPkgExists(arr[l]);
-		if (!exists) {
-			unfoundPkgs.push(arr[l]);
-		}
+	if (!plugs) {
+		// 加载默认
+		loadDefaultCommander();
 	}
 
-	return unfoundPkgs;
+	await Promise.all(
+		Object.keys(DEFAULT_COMMAND).map((key: PluginCommand) => applyPluginCommandOptions(key, DEFAULT_COMMAND[key]))
+	);
+
+	program.parse(process.argv);
+
+	if (!process.argv.slice(2).length) {
+		program.outputHelp();
+	}
 }
 
 /**
@@ -92,20 +153,7 @@ export async function runCmd<T extends CommonOptions>(cmd: PluginCommand | "init
 	}
 
 	try {
-		if (!hasCommandHooks(cmd)) {
-			switch (cmd) {
-				case "creation":
-					asCreationFallback();
-				case "build":
-					asBuildFallback();
-				case "deps":
-					asDepsFallback();
-				case "glint":
-					asGLintFallback();
-				case "publish":
-					asPublishFallback();
-			}
-		}
+		!hasHooks(cmd) && loadFallback(cmd);
 
 		cmd === "glint" || cmd === "deps" || cmd === "publish"
 			? await applyPluginsNoPkg(cmd, options)

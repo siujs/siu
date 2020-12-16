@@ -1,14 +1,12 @@
+import { Command } from "commander";
+
 import { PkgData } from "@siujs/utils";
 
-export type PluginCommand = "creation" | "genDocs" | "test" | "build" | "publish" | "glint" | "deps";
+export type PluginCommand = "create" | "doc" | "test" | "build" | "publish" | "glint" | "deps";
 
-export type PluginCommandLifecycle = "start" | "process" | "complete" | "error" | "clean";
+export type PluginCommandLifecycle = "initCmdOpts" | "start" | "process" | "complete" | "error" | "clean";
 
-export type GLintClientHooks = "pre-commit" | "prepare-commit-msg" | "commit-msg" | "post-commit" | "post-merge";
-
-export type GLintHookHandler = <O extends Record<string, any>, R>(hook: GLintClientHooks, options: O) => R | Promise<R>;
-
-export type PluginApi = Record<PluginCommand, Record<PluginCommandLifecycle, (fn: HookHandler) => void>>;
+export type PluginHookKey = string; //`${PluginCommand}.${PluginCommandLifecycle}`;
 
 export type SiuConfigExcludePkgs = string[] | Record<PluginCommand, string[]>;
 
@@ -119,3 +117,15 @@ export interface HookHandlerContext {
 }
 
 export type HookHandler = (ctx: HookHandlerContext, next: HookHandlerNext) => Promise<void> | void;
+
+export type CommandOptionsHandler = (command: Command & ThisType<Command>) => Promise<void> | void;
+
+export type ValueOf<T> = T extends Record<any, infer P> ? P : T;
+
+export type ParamTypeOf<T> = T extends (fn: infer P) => void ? P : T;
+
+export type HookHandlerFunc = (fn: HookHandler | CommandOptionsHandler) => void;
+
+export type PluginApi = Record<PluginCommand, Record<PluginCommandLifecycle, HookHandlerFunc>>;
+
+export type CommandOptionsHandlerParams = ParamTypeOf<CommandOptionsHandler>;
