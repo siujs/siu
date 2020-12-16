@@ -50,6 +50,8 @@ export class SiuConfiger {
 	isPkgDisable(pkgDirName: string, cmd: PluginCommand, plugId: string) {
 		const { excludePkgs, plugins } = this._config;
 
+		if (!plugins || !plugins.length) return false;
+
 		function validFromExcludePkgs(excludePkgs: SiuConfigExcludePkgs) {
 			if (Array.isArray(excludePkgs) && excludePkgs.includes(pkgDirName)) return true;
 			const opts = (excludePkgs as Record<PluginCommand, string[]>)[cmd];
@@ -105,6 +107,8 @@ export class SiuConfiger {
 
 	options(plugId: string) {
 		const { plugins } = this._config;
+
+		if (!plugins || !plugins.length) return;
 
 		const targetPlug = plugins.filter(plug => (Array.isArray(plug) ? plug[0] : plug) === plugId);
 
